@@ -1,8 +1,9 @@
 package fet.datn.exceptions;
 
+import fet.datn.factory.ResponseStatus;
 import lombok.Getter;
 import lombok.Setter;
-import vccorp.adtech.admicro.adsurlreport.factory.ResponseStatus;
+
 
 import java.io.Serializable;
 

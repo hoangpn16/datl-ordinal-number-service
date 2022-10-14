@@ -14,7 +14,7 @@ public class ResponseFactory {
         return ResponseEntity.ok(responseObject);
     }
 
-    public ResponseEntity success(Object data, Class clazz) {
+    public static ResponseEntity success(Object data, Class clazz) {
         GeneralResponse<Object> responseObject = new GeneralResponse();
         ResponseStatus responseStatus = new ResponseStatus();
         responseStatus.setCode(ResponseStatus.SUCCESS_CODE);
@@ -24,7 +24,7 @@ public class ResponseFactory {
         return ResponseEntity.ok(responseObject);
     }
 
-    public ResponseEntity success(Object data, Class clazz, Long total) {
+    public static ResponseEntity success(Object data, Class clazz, Long total) {
         GeneralResponse<Object> responseObject = new GeneralResponse();
         ResponseStatus responseStatus = new ResponseStatus();
         responseStatus.setCode(ResponseStatus.SUCCESS_CODE);
@@ -34,7 +34,7 @@ public class ResponseFactory {
         return ResponseEntity.ok(responseObject);
     }
 
-    public ResponseEntity success(Object data) {
+    public static ResponseEntity success(Object data) {
         GeneralResponse<Object> responseObject = new GeneralResponse();
         ResponseStatus responseStatus = new ResponseStatus();
         responseStatus.setCode(ResponseStatus.SUCCESS_CODE);
@@ -43,8 +43,6 @@ public class ResponseFactory {
         responseObject.setData(data);
         return ResponseEntity.ok(responseObject);
     }
-
-
 
     public static ResponseEntity success(List<Object> data) {
         GeneralList<Object> responseObject = new GeneralList<>();
