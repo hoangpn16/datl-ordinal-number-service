@@ -5,8 +5,10 @@ import fet.datn.exceptions.AppException;
 import fet.datn.exceptions.ErrorCode;
 import fet.datn.factory.ResponseFactory;
 import fet.datn.repositories.entities.OtpEntity;
+import fet.datn.repositories.entities.TokenEntity;
 import fet.datn.request.VerificationRequest;
 import fet.datn.service.OtpService;
+import fet.datn.service.TokenService;
 import fet.datn.service.VerificationService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,6 +35,9 @@ public class VerificationController {
 
     @Autowired
     private OtpConfiguration otpConfiguration;
+
+    @Autowired
+    private TokenService tokenService;
 
     @RequestMapping(value = "/otp/verify", method = RequestMethod.POST)
     public ResponseEntity verifyOtpCode(@RequestBody VerificationRequest verificationRequest) {
@@ -92,6 +97,7 @@ public class VerificationController {
 
         logger.info("Verify OTP with [{}] otpReferenceId successful", otpReferenceId);
         verificationService.createOtpVerificationEntity(otpEntity, true);
-        return ResponseFactory.success();
+        TokenEntity token = tokenService.genTokenCustomer(otpEntity);
+        return ResponseFactory.success(token, TokenEntity.class);
     }
 }

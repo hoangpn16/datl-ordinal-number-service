@@ -3,10 +3,13 @@ package fet.datn.service;
 import fet.datn.config.OtpConfiguration;
 import fet.datn.exceptions.AppException;
 import fet.datn.exceptions.ErrorCode;
+import fet.datn.repositories.CustomerDao;
 import fet.datn.repositories.OtpRepository;
+import fet.datn.repositories.entities.CustomerEntity;
 import fet.datn.repositories.entities.OtpEntity;
 import fet.datn.repositories.entities.OtpRestrictionEntity;
 import fet.datn.request.OtpGenerationRequest;
+import fet.datn.utils.DateTimeUtils;
 import fet.datn.utils.OtpTypeEnum;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -34,11 +38,20 @@ public class OtpService {
 
     @Autowired
     private OtpRestrictionService otpRestrictionService;
-//
-//    @Autowired
-//    SystemCustomerDao systemCustomerDao;
+
+    @Autowired
+    CustomerDao customerDao;
 
     public OtpEntity generateOtp(OtpGenerationRequest request) {
+        CustomerEntity customer = customerDao.findOneByPhone(request.getMobileNumber());
+        if (customer == null) {
+            customer = new CustomerEntity();
+            customer.setPhone(request.getMobileNumber());
+            customer.setCreatedTime(DateTimeUtils.getDateTimeNow());
+            customer.setModifiedTime(DateTimeUtils.getDateTimeNow());
+
+            customerDao.save(customer);
+        }
 
         // Check mobile_number is block or not. now > created_timestamp + Z * 1000L --> ok.
         OtpRestrictionEntity blocked = otpRestrictionService.findOtpRestrictionByMobile(request.getMobileNumber(), request.getType());
@@ -67,6 +80,7 @@ public class OtpService {
                 request.getMobileNumber(),
                 tokenService.generateOtpReferenceId(),
                 request.getType());
+
 
         logger.info("Generating new otp");
         otpRepository.save(otpEntity);
@@ -127,6 +141,8 @@ public class OtpService {
 
     private OtpEntity buildOtpEntity(String mobileNumber, String otpReferenceId, String otpType) {
         OtpEntity otpEntity = new OtpEntity();
+
+        otpEntity.setUserId(customerDao.findOneByPhone(mobileNumber).getUserId());
         otpEntity.setMobileNumber(mobileNumber);
         otpEntity.setOtpReferenceId(otpReferenceId);
         otpEntity.setType(otpType);
@@ -155,17 +171,12 @@ public class OtpService {
     }
 
     private Long verifyMobileNumberRegistrationAndGetTimesGeneration(OtpGenerationRequest request) {
-//        SystemCustomerEntity custom = systemCustomerDao.findOneByPhone(request.getMobileNumber());
-//        // TODO test case for password empty
-//        if (custom != null) {
-//            logger.error("Phone number [{}] already register before", request.getMobileNumber());
-//            throw new AuthenException(AuthenErrorCode.MOBILE_REGISTERED);
-//        }
 
         Long timesCreateOTP = otpRepository.countGeneratedOtpsByMobileNumber(
                 request.getMobileNumber(),
                 request.getType(),
                 new Timestamp(System.currentTimeMillis() - otpConfiguration.getGenerationRegisterTimeBoxInMinute() * 60 * 1000L));
+
         logger.info("Count number of otp generation for mobile [{}], type [{}] from [{}] minutes past to present. Result: [{}]", request.getMobileNumber(),
                 request.getType(), otpConfiguration.getGenerationRegisterTimeBoxInMinute(), timesCreateOTP);
         return timesCreateOTP;

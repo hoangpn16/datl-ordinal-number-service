@@ -9,7 +9,9 @@ import java.sql.Timestamp;
 
 @Entity
 @Table(name = "SYSTEM_OTP")
-@Getter @Setter @NoArgsConstructor
+@Getter
+@Setter
+@NoArgsConstructor
 public class OtpEntity {
 
     @Id
@@ -18,7 +20,7 @@ public class OtpEntity {
     private Integer id;
 
     @Column(name = "user_id")
-    private Integer userId;
+    private Long userId;
 
     @Column(name = "otp_code")
     private String otpCode;
