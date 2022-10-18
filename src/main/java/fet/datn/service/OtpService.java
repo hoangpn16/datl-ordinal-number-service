@@ -3,7 +3,7 @@ package fet.datn.service;
 import fet.datn.config.OtpConfiguration;
 import fet.datn.exceptions.AppException;
 import fet.datn.exceptions.ErrorCode;
-import fet.datn.repositories.CustomerDao;
+import fet.datn.repositories.CustomerRepository;
 import fet.datn.repositories.OtpRepository;
 import fet.datn.repositories.entities.CustomerEntity;
 import fet.datn.repositories.entities.OtpEntity;
@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -40,17 +39,17 @@ public class OtpService {
     private OtpRestrictionService otpRestrictionService;
 
     @Autowired
-    CustomerDao customerDao;
+    CustomerRepository customerRepository;
 
     public OtpEntity generateOtp(OtpGenerationRequest request) {
-        CustomerEntity customer = customerDao.findOneByPhone(request.getMobileNumber());
+        CustomerEntity customer = customerRepository.findOneByPhone(request.getMobileNumber());
         if (customer == null) {
             customer = new CustomerEntity();
             customer.setPhone(request.getMobileNumber());
             customer.setCreatedTime(DateTimeUtils.getDateTimeNow());
             customer.setModifiedTime(DateTimeUtils.getDateTimeNow());
 
-            customerDao.save(customer);
+            customerRepository.save(customer);
         }
 
         // Check mobile_number is block or not. now > created_timestamp + Z * 1000L --> ok.
@@ -142,7 +141,7 @@ public class OtpService {
     private OtpEntity buildOtpEntity(String mobileNumber, String otpReferenceId, String otpType) {
         OtpEntity otpEntity = new OtpEntity();
 
-        otpEntity.setUserId(customerDao.findOneByPhone(mobileNumber).getUserId());
+        otpEntity.setUserId(customerRepository.findOneByPhone(mobileNumber).getUserId());
         otpEntity.setMobileNumber(mobileNumber);
         otpEntity.setOtpReferenceId(otpReferenceId);
         otpEntity.setType(otpType);

@@ -1,6 +1,7 @@
 package fet.datn.service;
 
 import fet.datn.repositories.TokenDao;
+import fet.datn.repositories.entities.EmployeesEntity;
 import fet.datn.repositories.entities.OtpEntity;
 import fet.datn.repositories.entities.TokenEntity;
 
@@ -21,6 +22,9 @@ public class TokenService {
 
     @Value("${token.expired.time.in.day}")
     private Integer delta;
+
+    @Value("${token.admin.expired.time.in.day}")
+    private Integer deltaTimeAdmin;
 
     public String generateOtpReferenceId() {
         return UUID.randomUUID().toString();
@@ -44,6 +48,21 @@ public class TokenService {
         Long now = System.currentTimeMillis();
         long deltaTime = 86400000l * delta;
         Timestamp expiredTime = new Timestamp(now + deltaTime);
+        tokenEntity.setExpiredTime(expiredTime);
+
+        return tokenDao.save(tokenEntity);
+    }
+
+    public TokenEntity genTokenAdmin(EmployeesEntity em) {
+        TokenEntity tokenEntity = new TokenEntity();
+        String token = "Admin-" + UUID.randomUUID().toString();
+        Long now = System.currentTimeMillis();
+        long deltaTime = 86400000l * deltaTimeAdmin;
+        Timestamp expiredTime = new Timestamp(now + deltaTime);
+
+        tokenEntity.setToken(token);
+        tokenEntity.setUserId(em.getUserId());
+        tokenEntity.setCreatedTime(new Date());
         tokenEntity.setExpiredTime(expiredTime);
 
         return tokenDao.save(tokenEntity);

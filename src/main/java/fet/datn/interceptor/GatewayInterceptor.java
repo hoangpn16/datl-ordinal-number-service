@@ -2,7 +2,7 @@ package fet.datn.interceptor;
 
 import fet.datn.exceptions.AppException;
 import fet.datn.exceptions.ErrorCode;
-import fet.datn.repositories.CustomerDao;
+import fet.datn.repositories.CustomerRepository;
 import fet.datn.repositories.EmployeesRepository;
 import fet.datn.repositories.TokenDao;
 import fet.datn.repositories.entities.CustomerEntity;
@@ -15,17 +15,13 @@ import org.apache.logging.log4j.ThreadContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-import org.springframework.util.AntPathMatcher;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Service
 public class GatewayInterceptor implements HandlerInterceptor {
@@ -39,7 +35,7 @@ public class GatewayInterceptor implements HandlerInterceptor {
     private TokenDao tokenDao;
 
     @Autowired
-    private CustomerDao customerDao;
+    private CustomerRepository customerRepository;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -62,7 +58,6 @@ public class GatewayInterceptor implements HandlerInterceptor {
     }
 
     private boolean verifyRequest(HttpServletRequest request) {
-
         String httpMethod = request.getMethod();
         String servletPath = request.getServletPath();
         if (servletPath.contains("swagger")) {
@@ -89,7 +84,7 @@ public class GatewayInterceptor implements HandlerInterceptor {
                 payload.setUserName(employeesEntity.getUserName());
 
             } else if (jwtToken.contains("Customer")) {
-                CustomerEntity customerEntity = customerDao.findOneByUserId(token.getUserId());
+                CustomerEntity customerEntity = customerRepository.findOneByUserId(token.getUserId());
 
                 payload.setUserId(customerEntity.getUserId());
                 payload.setUserName(customerEntity.getPhone());
@@ -102,6 +97,4 @@ public class GatewayInterceptor implements HandlerInterceptor {
         logger.info("Request validated. Start forward request to backend");
         return true;
     }
-
-
 }
