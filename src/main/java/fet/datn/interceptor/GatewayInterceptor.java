@@ -4,7 +4,7 @@ import fet.datn.exceptions.AppException;
 import fet.datn.exceptions.ErrorCode;
 import fet.datn.repositories.CustomerRepository;
 import fet.datn.repositories.EmployeesRepository;
-import fet.datn.repositories.TokenDao;
+import fet.datn.repositories.TokenRepository;
 import fet.datn.repositories.entities.CustomerEntity;
 import fet.datn.repositories.entities.EmployeesEntity;
 import fet.datn.repositories.entities.TokenEntity;
@@ -15,7 +15,6 @@ import org.apache.logging.log4j.ThreadContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -32,7 +31,7 @@ public class GatewayInterceptor implements HandlerInterceptor {
     private EmployeesRepository employeeDao;
 
     @Autowired
-    private TokenDao tokenDao;
+    private TokenRepository tokenRepository;
 
     @Autowired
     private CustomerRepository customerRepository;
@@ -65,7 +64,7 @@ public class GatewayInterceptor implements HandlerInterceptor {
         }
         String jwtToken = request.getHeader(Definition.AUTHORIZATION_KEY);
         if (!StringUtils.isBlank(jwtToken)) {
-            TokenEntity token = tokenDao.findOneByToken(jwtToken);
+            TokenEntity token = tokenRepository.findOneByToken(jwtToken);
             if (token == null) {
                 logger.info("Not fount token [{}]", jwtToken);
                 throw new AppException(ErrorCode.TOKEN_NOT_FOUND);

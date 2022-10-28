@@ -37,9 +37,12 @@ public enum ErrorCode {
     INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "FET-617", "Mật khẩu không hợp lệ"), //"blocked_mobile", "This mobile is blocked because request too many OTP"
     INVALID_REQUEST(HttpStatus.BAD_REQUEST, "FET-618", "Yêu cầu không hợp lệ"),
 
-    ORDINALNUM_EXISTED(HttpStatus.BAD_REQUEST, "FET-619","Bạn đã lấy số thứ tự"),
-    USERNAME_EXISTED(HttpStatus.BAD_REQUEST,"FET-620","Tên đăng nhập đã tồn tại"),
-    PASSWORD_NOT_MERGE(HttpStatus.BAD_REQUEST,"FET-621","Nhập lại mật khẩu không chính xác");
+    ORDINALNUM_EXISTED(HttpStatus.BAD_REQUEST, "FET-619", "Bạn đã lấy số thứ tự"),
+    USERNAME_EXISTED(HttpStatus.BAD_REQUEST, "FET-620", "Tên đăng nhập đã tồn tại"),
+    PASSWORD_NOT_MERGE(HttpStatus.BAD_REQUEST, "FET-621", "Nhập lại mật khẩu không chính xác"),
+    CANT_BOOK_SCHEDULE(HttpStatus.BAD_REQUEST, "FET-622", "Không thể đặt lịch do đã có lịch chưa được xử lí"),
+    CANT_UPDATE_SCHEDULE(HttpStatus.BAD_REQUEST, "FET-623", "Bạn không thể chỉnh sửa do lịch hẹn đã hoàn thành"),
+    CANT_DELETE_SCHEDULE(HttpStatus.BAD_REQUEST, "FET-624", "Bạn xóa lịch hẹn");
 
 
     private final HttpStatus status;

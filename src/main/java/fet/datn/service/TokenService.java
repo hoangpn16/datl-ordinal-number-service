@@ -1,6 +1,6 @@
 package fet.datn.service;
 
-import fet.datn.repositories.TokenDao;
+import fet.datn.repositories.TokenRepository;
 import fet.datn.repositories.entities.EmployeesEntity;
 import fet.datn.repositories.entities.OtpEntity;
 import fet.datn.repositories.entities.TokenEntity;
@@ -18,7 +18,7 @@ import java.util.UUID;
 @Service
 public class TokenService {
     @Autowired
-    private TokenDao tokenDao;
+    private TokenRepository tokenRepository;
 
     @Value("${token.expired.time.in.day}")
     private Integer delta;
@@ -50,7 +50,7 @@ public class TokenService {
         Timestamp expiredTime = new Timestamp(now + deltaTime);
         tokenEntity.setExpiredTime(expiredTime);
 
-        return tokenDao.save(tokenEntity);
+        return tokenRepository.save(tokenEntity);
     }
 
     public TokenEntity genTokenAdmin(EmployeesEntity em) {
@@ -65,7 +65,7 @@ public class TokenService {
         tokenEntity.setCreatedTime(new Date());
         tokenEntity.setExpiredTime(expiredTime);
 
-        return tokenDao.save(tokenEntity);
+        return tokenRepository.save(tokenEntity);
     }
 
 }

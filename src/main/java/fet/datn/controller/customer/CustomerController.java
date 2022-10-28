@@ -3,7 +3,7 @@ package fet.datn.controller.customer;
 import fet.datn.factory.ResponseFactory;
 import fet.datn.interceptor.Payload;
 import fet.datn.repositories.entities.OrdinalNumberEntity;
-import fet.datn.service.OrdinalNumberService;
+import fet.datn.service.CustomerService;
 import fet.datn.utils.Definition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +20,7 @@ public class CustomerController {
     private ResponseFactory factory;
 
     @Autowired
-    private OrdinalNumberService service;
+    private CustomerService service;
 
     @PostMapping(value = "/ordinal-number")
     public ResponseEntity genOrdinalNumber(@RequestAttribute(name = Definition.PAYLOAD, required = false) Payload payload) {
