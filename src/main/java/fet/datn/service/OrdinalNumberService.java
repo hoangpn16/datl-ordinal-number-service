@@ -13,6 +13,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class OrdinalNumberService {
     private static final Logger logger = LoggerFactory.getLogger(OrdinalNumberService.class);
@@ -44,6 +46,29 @@ public class OrdinalNumberService {
 
     public OrdinalNumberEntity getNumberOfUser(Payload payload) {
         return ordinalNumberDao.findOrdinalNumberByUserIdAndCreateTime(payload.getUserId());
+    }
+
+
+    //TODO:  API for admin
+
+    public OrdinalNumberEntity handleNumber() {
+        OrdinalNumberEntity entity = ordinalNumberDao.findNextOrdinalNumber();
+        entity.setStatus(Constants.STATUS.IS_PROCESSING);
+        return entity;
+    }
+
+    public OrdinalNumberEntity updateStatus(Long id, Integer status) {
+        OrdinalNumberEntity entity = ordinalNumberDao.findOneById(id);
+        if (entity == null) {
+            logger.info("Not found orfinal id [{}]", id);
+            throw new AppException(ErrorCode.ENTITY_NOT_EXISTS);
+        }
+        entity.setStatus(status);
+        return ordinalNumberDao.save(entity);
+    }
+
+    public List<OrdinalNumberEntity> getOrdinalNumberByStatus(Integer status) {
+        return ordinalNumberDao.findAllByStatus(status);
     }
 
 

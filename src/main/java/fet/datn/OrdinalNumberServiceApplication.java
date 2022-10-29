@@ -7,6 +7,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class OrdinalNumberServiceApplication {
     public static void main(String[] args) {
         SpringApplication.run(OrdinalNumberServiceApplication.class, args);
-        System.out.println("Started [ordinal-number-service] server");
+        System.out.println("Started [Ordinal-Number-Service] server");
     }
 }
