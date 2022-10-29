@@ -2,11 +2,9 @@ package fet.datn.controller.customer;
 
 import fet.datn.factory.ResponseFactory;
 import fet.datn.interceptor.Payload;
-import fet.datn.repositories.entities.OrdinalNumberEntity;
 import fet.datn.repositories.entities.ScheduleEntity;
 import fet.datn.request.ScheduleRequest;
-import fet.datn.service.CustomerService;
-import fet.datn.utils.Definition;
+import fet.datn.service.ScheduleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,28 +13,23 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(value = "/user")
-public class CustomerController {
-    private static final Logger logger = LoggerFactory.getLogger(CustomerController.class);
+public class ScheduleController {
+    private static final Logger logger = LoggerFactory.getLogger(ScheduleController.class);
 
     @Autowired
     private ResponseFactory factory;
 
     @Autowired
-    private CustomerService service;
+    private ScheduleService service;
 
-    @PostMapping(value = "/ordinal-number")
-    public ResponseEntity genOrdinalNumber(@RequestAttribute(name = Definition.PAYLOAD, required = false) Payload payload) {
-
-        logger.info("User id [{}] get ordinal number", payload.getUserId());
-        OrdinalNumberEntity data = service.genOrdinalNumber(payload);
-        return factory.success(data, OrdinalNumberEntity.class);
-    }
-
-    @GetMapping(value = "/ordinal-number")
-    public ResponseEntity getNumberOfUser(@RequestAttribute(name = Definition.PAYLOAD, required = false) Payload payload) {
-        logger.info("User id [{}] get number", payload.getUserId());
-        OrdinalNumberEntity data = service.getNumberOfUser(payload);
-        return factory.success(data, OrdinalNumberEntity.class);
+    @GetMapping(value = "/schedule/all")
+    public ResponseEntity getAllSchedule(@RequestAttribute Payload payload,
+                                         @RequestParam(value = "orderBy", required = false, defaultValue = "id") String orderBy,
+                                         @RequestParam(value = "direction", required = false, defaultValue = "DESC") String direction,
+                                         @RequestParam(value = "pageNum", required = false, defaultValue = "0") Integer pageNum,
+                                         @RequestParam(value = "pageSize", required = false, defaultValue = "20") Integer pageSize) {
+        logger.info("User id [{}] get all schedule", payload.getUserId());
+        return service.getAllSchedule(payload, orderBy, direction, pageNum, pageSize);
     }
 
     @PostMapping(value = "/schedule/book")

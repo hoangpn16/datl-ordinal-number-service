@@ -2,10 +2,11 @@ package fet.datn.service;
 
 import fet.datn.exceptions.AppException;
 import fet.datn.exceptions.ErrorCode;
+import fet.datn.factory.PageResponse;
+import fet.datn.factory.PageResponseUtil;
+import fet.datn.factory.ResponseFactory;
 import fet.datn.interceptor.Payload;
-import fet.datn.repositories.OrdinalNumberRepository;
 import fet.datn.repositories.ScheduleRepository;
-import fet.datn.repositories.entities.OrdinalNumberEntity;
 import fet.datn.repositories.entities.ScheduleEntity;
 import fet.datn.request.ScheduleRequest;
 import fet.datn.utils.AppUtils;
@@ -14,41 +15,32 @@ import fet.datn.utils.DateTimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
 
+import javax.xml.ws.Action;
 import java.util.List;
 
 @Service
-public class CustomerService {
-    private static final Logger logger = LoggerFactory.getLogger(CustomerService.class);
-
-    @Autowired
-    private OrdinalNumberRepository ordinalNumberDao;
+public class ScheduleService {
+    private static final Logger logger = LoggerFactory.getLogger(ScheduleService.class);
 
     @Autowired
     private ScheduleRepository scheduleRepository;
 
-    public OrdinalNumberEntity genOrdinalNumber(Payload payload) {
-        OrdinalNumberEntity ordinalNum = ordinalNumberDao.findOrdinalNumberByUserIdAndCreateTime(payload.getUserId());
-        if (ordinalNum != null) {
-            logger.info("Bạn đã lấy số thứ tự");
-            throw new AppException(ErrorCode.ORDINALNUM_EXISTED);
+    public ResponseEntity getAllSchedule(Payload payload, String orderBy, String direction, Integer pageNum, Integer pageSize) {
+        Sort sort = Sort.by(Sort.Direction.ASC, orderBy);
+        if (Sort.Direction.DESC.name().equals(direction)) {
+            sort = Sort.by(Sort.Direction.DESC, orderBy);
         }
-
-        ordinalNum = new OrdinalNumberEntity();
-
-        ordinalNum.setUserId(payload.getUserId());
-        ordinalNum.setStatus(Constants.STATUS.WAITING);
-        ordinalNum.setCreatedTime(DateTimeUtils.getDateTimeNow());
-
-        Integer count = ordinalNumberDao.countOrdinalNumber();
-        ordinalNum.setOrdinalNumber(count + 1);
-
-        return ordinalNumberDao.save(ordinalNum);
-    }
-
-    public OrdinalNumberEntity getNumberOfUser(Payload payload) {
-        return ordinalNumberDao.findOrdinalNumberByUserIdAndCreateTime(payload.getUserId());
+        PageRequest pageRequest = PageRequest.of(pageNum, pageSize, sort);
+        Page pageResult = scheduleRepository.findAllByCustomerId(payload.getUserId(), pageRequest);
+        PageResponse pageResponse = PageResponseUtil.buildPageResponse(pageResult);
+        return ResponseFactory.success(pageResult.getContent(), pageResponse);
     }
 
     public ScheduleEntity bookSchedule(Payload payload, ScheduleRequest requestBody) {

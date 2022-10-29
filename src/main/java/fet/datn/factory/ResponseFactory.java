@@ -54,5 +54,11 @@ public class ResponseFactory {
         return ResponseEntity.ok(responseObject);
     }
 
+    public static ResponseEntity success(List<Object> data, PageResponse pageResponse) {
+        GeneralPageResponse<Object> responseObject = new GeneralPageResponse<>(ResponseStatus.SUCCESS_STATUS, data,
+                pageResponse);
+        return ResponseEntity.ok(responseObject);
+    }
+
 
 }
