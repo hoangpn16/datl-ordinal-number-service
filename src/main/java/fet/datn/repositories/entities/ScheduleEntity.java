@@ -17,7 +17,7 @@ public class ScheduleEntity {
     private Long customerId;
 
     @Column(name = "title")
-    private String title
+    private String title;
 
     @Column(name = "customer_note")
     private String customerNote;

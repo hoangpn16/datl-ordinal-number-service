@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" monitorinterval="30">
+    <Properties>
+        <Property name="log-path">logs</Property>
+        <Property name="log-pattern">%d{yyyy-MM-dd HH:mm:ss} [${sys:PID}][%-5level] [%-4L] [%t] %C{1.} - %msg%n</Property>
+        <Property name="append">false</Property>
+    </Properties>
+
+    <Appenders>
+        <!-- console appender -->
+        <Console name="console-log" target="SYSTEM_OUT">
+            <PatternLayout
+                    pattern="%d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd HH:mm:ss.SSS}} %highlight{${LOG_LEVEL_PATTERN:-%5p}}{FATAL=red blink, ERROR=red, WARN=yellow bold, INFO=green, DEBUG=green bold, TRACE=blue} %style{${sys:PID}}{magenta} [%15.15t] %style{%-40.40C{1.}}{cyan}[%-4L] : %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}">
+            </PatternLayout>
+        </Console>
+
+        <!-- file appender -->
+        <RollingFile name="root-log" fileName="${log-path}/log.txt"
+                     filePattern="${log-path}/log-%d{yyyy-MM-dd}.txt"
+                     append="false" immediateFlush="true">
+            <!-- log pattern -->
+            <PatternLayout>
+                <!--<pattern>%d{yyyy-MM-dd HH:mm:ss} [${sys:PID}] [%-5level] [%c{1} %t] - %msg%n</pattern>-->
+                <pattern>${log-pattern}</pattern>
+            </PatternLayout>
+
+            <!-- set file size policy -->
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+        </RollingFile>
+
+        <RollingFile name="error-log" fileName="${log-path}/error.log"
+                     filePattern="${log-path}/error-%d{yyyy-MM-dd}.log"
+                     append="${append}" immediateFlush="true">
+            <!-- log pattern -->
+            <PatternLayout>
+                <!--<pattern>%d{yyyy-MM-dd HH:mm:ss} [${sys:PID}] [%-5level] [%c{1} %t] - %msg%n</pattern>-->
+                <pattern>${log-pattern}</pattern>
+            </PatternLayout>
+
+            <!-- set file size policy -->
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+        </RollingFile>
+
+        <RollingFile name="request-log" fileName="${log-path}/request.log"
+                     filePattern="${log-path}/request-%d{yyyy-MM-dd}.log"
+                     append="${append}" immediateFlush="true">
+            <!-- log pattern -->
+            <PatternLayout>
+                <!--<pattern>%d{yyyy-MM-dd HH:mm:ss} [${sys:PID}] [%-5level] [%c{1} %t] - %msg%n</pattern>-->
+                <pattern>${log-pattern}</pattern>
+            </PatternLayout>
+
+            <!-- set file size policy -->
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+        </RollingFile>
+
+        <RollingFile name="db-log" fileName="${log-path}/database.log"
+                     filePattern="${log-path}/database-%d{yyyy-MM-dd}.log"
+                     append="${append}" immediateFlush="true">
+            <!-- log pattern -->
+            <PatternLayout>
+                <pattern>${log-pattern}</pattern>
+            </PatternLayout>
+
+            <!-- set file size policy -->
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+        </RollingFile>
+
+        <RollingFile name="common-log" fileName="${log-path}/common.log"
+                     filePattern="${log-path}/common-%d{yyyy-MM-dd}.log"
+                     append="${append}" immediateFlush="true">
+            <!-- log pattern -->
+            <PatternLayout>
+                <pattern>${log-pattern}</pattern>
+            </PatternLayout>
+
+            <!-- set file size policy -->
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+        </RollingFile>
+
+        <RollingFile name="WorkerLog" fileName="${log-path}/worker.log"
+                     filePattern="${log-path}/gen-%d{yyyy-MM-dd}.log"
+                     append="${append}" immediateFlush="true">
+            <!-- log pattern -->
+            <PatternLayout>
+                <pattern>${log-pattern}</pattern>
+            </PatternLayout>
+
+            <!-- set file size policy -->
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+        </RollingFile>
+
+    </Appenders>
+
+    <Loggers>
+        <Logger name="ErrorLog">
+            <AppenderRef ref="error-log" level="info"/>
+        </Logger>
+        <Logger name="CommonLog">
+            <AppenderRef ref="common-log" level="info"/>
+        </Logger>
+        <Logger name="RequestLog">
+            <AppenderRef ref="request-log" level="info"/>
+        </Logger>
+        <Logger name="DatabaseLog">
+            <AppenderRef ref="db-log" level="info"/>
+        </Logger>
+        <Logger name="WorkerLog" additivity="false">
+            <AppenderRef ref="WorkerLog" level="info"/>
+        </Logger>
+        <Root level="info" additivity="false">
+            <AppenderRef ref="root-log" level="info"/>
+            <AppenderRef ref="console-log"/>
+        </Root>
+    </Loggers>
+</Configuration>

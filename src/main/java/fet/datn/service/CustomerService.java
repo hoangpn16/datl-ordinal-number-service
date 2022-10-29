@@ -8,6 +8,7 @@ import fet.datn.repositories.ScheduleRepository;
 import fet.datn.repositories.entities.OrdinalNumberEntity;
 import fet.datn.repositories.entities.ScheduleEntity;
 import fet.datn.request.ScheduleRequest;
+import fet.datn.utils.AppUtils;
 import fet.datn.utils.Constants;
 import fet.datn.utils.DateTimeUtils;
 import org.slf4j.Logger;
@@ -65,6 +66,19 @@ public class CustomerService {
         entity.setTimeCreated(DateTimeUtils.getDateTimeNow());
 
         return scheduleRepository.save(entity);
+    }
+
+    public ScheduleEntity updateSchedule(Payload payload, Long id, ScheduleRequest request) {
+        ScheduleEntity entity = scheduleRepository.findOneById(id);
+        if (entity == null) {
+            throw new AppException(ErrorCode.ENTITY_NOT_EXISTS);
+        }
+        if (!entity.getStatus().equals(Constants.SCHEDULE_STATUS.WAITING_CONFIRM)) {
+            throw new AppException(ErrorCode.CANT_UPDATE_SCHEDULE);
+        }
+        AppUtils.copyPropertiesIgnoreNull(request, entity);
+        return scheduleRepository.save(entity);
+
     }
 
     public ScheduleEntity cancelSchedule(Payload payload, Long id) {
