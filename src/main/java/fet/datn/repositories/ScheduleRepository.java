@@ -17,5 +17,10 @@ public interface ScheduleRepository extends JpaRepository<ScheduleEntity, Long> 
 
     Page findAllByCustomerId(Long customerId, Pageable pageable);
 
+    Page findAllByStatus(Integer status, Pageable pageable);
+
+
+    Page findAll(Pageable pageable);
+
     List<ScheduleEntity> findAllByCustomerIdAndStatus(Long customerId, Integer status);
 }

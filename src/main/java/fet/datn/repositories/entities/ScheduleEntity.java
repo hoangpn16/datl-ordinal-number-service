@@ -22,7 +22,6 @@ public class ScheduleEntity {
     @Column(name = "customer_note")
     private String customerNote;
 
-
     @Column(name = "time_schedule")
     private String timeSchedule;
 

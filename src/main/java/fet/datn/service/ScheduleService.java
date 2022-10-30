@@ -8,6 +8,7 @@ import fet.datn.factory.ResponseFactory;
 import fet.datn.interceptor.Payload;
 import fet.datn.repositories.ScheduleRepository;
 import fet.datn.repositories.entities.ScheduleEntity;
+import fet.datn.request.ConfirmScheduleRequest;
 import fet.datn.request.ScheduleRequest;
 import fet.datn.utils.AppUtils;
 import fet.datn.utils.Constants;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.xml.ws.Action;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class ScheduleService {
@@ -94,5 +96,51 @@ public class ScheduleService {
             throw new AppException(ErrorCode.CANT_UPDATE_SCHEDULE);
         }
         scheduleRepository.delete(entity);
+    }
+
+
+    //API for admin
+
+    public ScheduleEntity confirmSchedule(Payload payload, Long id, ConfirmScheduleRequest requestBody) {
+        ScheduleEntity entity = scheduleRepository.findOneById(id);
+        if (entity == null) {
+            throw new AppException(ErrorCode.ENTITY_NOT_EXISTS);
+        }
+
+        AppUtils.copyPropertiesIgnoreNull(requestBody, entity);
+        entity.setEmployeeeeConfirmId(payload.getUserId());
+        entity.setTimeConfirm(DateTimeUtils.getDateTimeNow());
+        entity.setStatus(Constants.SCHEDULE_STATUS.CONFIRM);
+
+        return scheduleRepository.save(entity);
+    }
+
+    public ScheduleEntity updateStatusSchedule(Payload payload, Long id, Integer status) {
+        ScheduleEntity entity = scheduleRepository.findOneById(id);
+        if (entity == null) {
+            throw new AppException(ErrorCode.ENTITY_NOT_EXISTS);
+        }
+        if (entity.getStatus().equals(Constants.SCHEDULE_STATUS.DONE)) {
+            throw new AppException(ErrorCode.CANT_UPDATE_SCHEDULE);
+        }
+        entity.setStatus(status);
+        return scheduleRepository.save(entity);
+    }
+
+    public ResponseEntity findAllSchedule(Integer status, String orderBy, String direction, Integer pageNum, Integer pageSize) {
+        Sort sort = Sort.by(Sort.Direction.ASC, orderBy);
+        if (Sort.Direction.DESC.name().equals(direction)) {
+            sort = Sort.by(Sort.Direction.DESC, orderBy);
+        }
+        PageRequest pageRequest = PageRequest.of(pageNum, pageSize, sort);
+        Page pageResult = null;
+        if (Objects.nonNull(status)) {
+            pageResult = scheduleRepository.findAllByStatus(status, pageRequest);
+        } else {
+            pageResult = scheduleRepository.findAll(pageRequest);
+        }
+
+        PageResponse pageResponse = PageResponseUtil.buildPageResponse(pageResult);
+        return ResponseFactory.success(pageResult.getContent(), pageResponse);
     }
 }
