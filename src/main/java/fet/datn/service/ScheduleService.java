@@ -108,7 +108,7 @@ public class ScheduleService {
         }
 
         AppUtils.copyPropertiesIgnoreNull(requestBody, entity);
-        entity.setEmployeeeeConfirmId(payload.getUserId());
+        entity.setEmployeeConfirmId(payload.getUserId());
         entity.setTimeConfirm(DateTimeUtils.getDateTimeNow());
         entity.setStatus(Constants.SCHEDULE_STATUS.CONFIRM);
 

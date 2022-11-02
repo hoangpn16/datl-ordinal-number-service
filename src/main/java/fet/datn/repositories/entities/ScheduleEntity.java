@@ -25,11 +25,11 @@ public class ScheduleEntity {
     @Column(name = "time_schedule")
     private String timeSchedule;
 
-    @Column(name = "employyee_confirm_id")
-    private Long employeeeeConfirmId;
+    @Column(name = "employee_confirm_id")
+    private Long employeeConfirmId;
 
     @Column(name = "employee_note")
-    private String employeeeeNote;
+    private String employeeNote;
 
     @Column(name = "time_confirm")
     private String timeConfirm;
