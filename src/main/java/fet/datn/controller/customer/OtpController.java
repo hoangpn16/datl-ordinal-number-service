@@ -15,6 +15,7 @@ import fet.datn.service.impl.OtpServiceImpl;
 import fet.datn.service.impl.SmsSenderServiceImpl;
 import fet.datn.service.impl.VerificationServiceImpl;
 import fet.datn.utils.OtpTypeEnum;
+import io.swagger.annotations.ApiOperation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +50,7 @@ public class OtpController {
     private SmsSenderService smsSenderServiceImpl;
 
     @RequestMapping(value = "/otp/generate", method = RequestMethod.POST)
+    @ApiOperation(value = "API gen OTP")
     public ResponseEntity generateOtp(@RequestBody OtpGenerationRequest request) throws Exception {
         logger.info("========== Start generate otp ==========");
         ResponseEntity responseEntity = buildOtpGenerateVerificationResponse(request);
@@ -67,6 +69,7 @@ public class OtpController {
     }
 
     @RequestMapping(value = "/otp/regenerate", method = RequestMethod.POST)
+    @ApiOperation(value = "API regen OTP")
     public ResponseEntity regenerateOtp(@RequestBody OtpRegenerationRequest request) {
         logger.info("========== Start regenerate otp ==========");
         ResponseEntity responseEntity = buildRegenerateOtpResponse(request.getOtpReferenceId());

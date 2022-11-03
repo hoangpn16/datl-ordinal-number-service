@@ -8,6 +8,7 @@ import fet.datn.repositories.entities.OrdinalNumberEntity;
 import fet.datn.service.OrdinalNumberService;
 import fet.datn.service.impl.OrdinalNumberServiceImpl;
 import fet.datn.utils.Definition;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ public class OrdinalNumberController {
     private OrdinalNumberService service;
 
     @PostMapping(value = "/ordinal-number")
+    @ApiOperation(value = "API client gen số thứ tự")
     public ResponseEntity genOrdinalNumber(@RequestAttribute(name = Definition.PAYLOAD, required = false) Payload payload) {
         if (payload == null) {
             logger.info("Mã truy cập không hợp lệ");
@@ -34,6 +36,7 @@ public class OrdinalNumberController {
     }
 
     @GetMapping(value = "/ordinal-number")
+    @ApiOperation(value = "API get số thứ tự của mình")
     public ResponseEntity getNumberOfUser(@RequestAttribute(name = Definition.PAYLOAD, required = false) Payload payload) {
         if (payload == null) {
             logger.info("Mã truy cập không hợp lệ");
@@ -45,6 +48,7 @@ public class OrdinalNumberController {
     }
 
     @GetMapping(value = "/ordinal-number/count-waiting")
+    @ApiOperation(value = "API lấy số người đang chờ trước số của mình")
     public ResponseEntity getNumberOfUserIsWaiting(@RequestAttribute(name = Definition.PAYLOAD, required = false) Payload payload) {
         if (payload == null) {
             logger.info("Mã truy cập không hợp lệ");

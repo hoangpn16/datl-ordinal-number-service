@@ -13,6 +13,7 @@ import fet.datn.service.VerificationService;
 import fet.datn.service.impl.OtpServiceImpl;
 import fet.datn.service.impl.TokenServiceImpl;
 import fet.datn.service.impl.VerificationServiceImpl;
+import io.swagger.annotations.ApiOperation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,7 @@ public class VerificationController {
     private TokenService tokenServiceImpl;
 
     @RequestMapping(value = "/otp/verify", method = RequestMethod.POST)
+    @ApiOperation(value = "API verify OTP")
     public ResponseEntity verifyOtpCode(@RequestBody VerificationRequest verificationRequest) {
         logger.info("========== Start verifying OTP ==========");
         logger.info("Verifying OTP with [{}] otpReferenceId", verificationRequest.getOtpReferenceId());
