@@ -21,6 +21,10 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.sql.Timestamp;
+import java.util.Date;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class GatewayInterceptor implements HandlerInterceptor {
@@ -35,6 +39,8 @@ public class GatewayInterceptor implements HandlerInterceptor {
 
     @Autowired
     private CustomerRepository customerRepository;
+
+    private static final Map<String, Payload> authenCaching = new ConcurrentHashMap<>();
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -64,30 +70,8 @@ public class GatewayInterceptor implements HandlerInterceptor {
         }
         String jwtToken = request.getHeader(Definition.AUTHORIZATION_KEY);
         if (!StringUtils.isBlank(jwtToken)) {
-            TokenEntity token = tokenRepository.findOneByToken(jwtToken);
-            if (token == null) {
-                logger.info("Not fount token [{}]", jwtToken);
-                throw new AppException(ErrorCode.TOKEN_NOT_FOUND);
-            }
-            Payload payload = new Payload();
-            payload.setToken(jwtToken);
-            // TODO gán thông tin cho payload
-            if (jwtToken.contains("Admin")) {
-                EmployeesEntity employeesEntity = employeeDao.findOneByUserId(token.getUserId());
-                if (employeesEntity == null) {
-                    logger.info("Not found user id [{}] with token [{}]", token.getUserId(), token.getToken());
-                    throw new AppException(ErrorCode.ENTITY_NOT_EXISTS);
-                }
 
-                payload.setUserId(employeesEntity.getUserId());
-                payload.setUserName(employeesEntity.getUserName());
-
-            } else if (jwtToken.contains("Customer")) {
-                CustomerEntity customerEntity = customerRepository.findOneByUserId(token.getUserId());
-
-                payload.setUserId(customerEntity.getUserId());
-                payload.setUserName(customerEntity.getPhone());
-            }
+            Payload payload = getPayload(jwtToken);
 
 
             request.setAttribute(Definition.PAYLOAD, payload);
@@ -96,4 +80,61 @@ public class GatewayInterceptor implements HandlerInterceptor {
         logger.info("Request validated. Start forward request to backend");
         return true;
     }
+
+    private Payload getPayload(String jwtToken) {
+        Payload payload = authenCaching.get(jwtToken);
+        if (payload != null) {
+            checkExpiredTime(payload);
+            return payload;
+        }
+
+        payload = new Payload();
+        TokenEntity token = tokenRepository.findOneByToken(jwtToken);
+        if (token == null) {
+            logger.info("Not found token [{}]", jwtToken);
+            throw new AppException(ErrorCode.TOKEN_NOT_FOUND);
+        }
+        payload.setToken(jwtToken);
+        payload.setExpiredTime(token.getExpiredTime());
+        if (token.getExpiredTime().before(new Date(System.currentTimeMillis()))) {
+            throw new AppException(ErrorCode.TOKEN_EXPIRED);
+        }
+
+        // TODO gán thông tin cho payload
+        if (jwtToken.contains("Admin")) {
+            EmployeesEntity employeesEntity = employeeDao.findOneByUserId(token.getUserId());
+            if (employeesEntity == null) {
+                logger.info("Not found user id [{}] with token [{}]", token.getUserId(), token.getToken());
+                throw new AppException(ErrorCode.ENTITY_NOT_EXISTS);
+            }
+
+            payload.setUserId(employeesEntity.getUserId());
+            payload.setUserName(employeesEntity.getUserName());
+
+        } else if (jwtToken.contains("Customer")) {
+            CustomerEntity customerEntity = customerRepository.findOneByUserId(token.getUserId());
+
+            payload.setUserId(customerEntity.getUserId());
+            payload.setUserName(customerEntity.getPhone());
+        }
+        saveToCache(payload);
+
+        return payload;
+    }
+
+    private void checkExpiredTime(Payload payload) {
+        if (payload.getExpiredTime().before(new Date(System.currentTimeMillis()))) {
+            removeTokenFromCache(payload.getToken());
+            throw new AppException(ErrorCode.TOKEN_EXPIRED);
+        }
+    }
+
+    public void saveToCache(Payload payload) {
+        authenCaching.put(payload.getToken(), payload);
+    }
+
+    public void removeTokenFromCache(String accessToken) {
+        authenCaching.remove(accessToken);
+    }
+
 }

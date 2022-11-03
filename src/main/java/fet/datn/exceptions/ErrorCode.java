@@ -10,7 +10,7 @@ public enum ErrorCode {
 
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "FET-402", "Truyền sai tham số"),
     INVALID_SHOPID(HttpStatus.BAD_REQUEST, "FET-403", "ShopId isn't config in pod service"),
-    TOKEN_EXPIRED(HttpStatus.BAD_REQUEST, "FET-405", "Mã truy cập hết hạn"),
+    TOKEN_EXPIRED(HttpStatus.BAD_REQUEST, "FET-405", "Mã truy cập hết hạn. Vui lòng đăng nhập lại"),
     TOKEN_NOT_FOUND(HttpStatus.BAD_REQUEST, "FET-406", "Không tìm thấy mã truy cập"),
     TOKEN_INVALID(HttpStatus.BAD_REQUEST, "FET-407", "Mã truy cập không hợp lệ"),
     CANNOT_SEND_MESSAGE(HttpStatus.BAD_REQUEST, "FET-408", "Không thể gửi thông báo"),
