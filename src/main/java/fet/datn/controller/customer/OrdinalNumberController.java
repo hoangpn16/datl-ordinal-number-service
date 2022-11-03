@@ -1,5 +1,7 @@
 package fet.datn.controller.customer;
 
+import fet.datn.exceptions.AppException;
+import fet.datn.exceptions.ErrorCode;
 import fet.datn.factory.ResponseFactory;
 import fet.datn.interceptor.Payload;
 import fet.datn.repositories.entities.OrdinalNumberEntity;
@@ -35,6 +37,16 @@ public class OrdinalNumberController {
         logger.info("User id [{}] get number", payload.getUserId());
         OrdinalNumberEntity data = service.getNumberOfUser(payload);
         return factory.success(data, OrdinalNumberEntity.class);
+    }
+
+    @GetMapping(value = "/ordinal-number/count-waiting")
+    public ResponseEntity getNumberOfUserIsWaiting(@RequestAttribute(name = Definition.PAYLOAD, required = false) Payload payload) {
+        if (payload == null) {
+            throw new AppException(ErrorCode.TOKEN_NOT_FOUND);
+        }
+        logger.info("User id [{}] get number of user is waiting", payload.getUserId());
+        Integer data = service.getNumberOfUserIsWaiting(payload);
+        return factory.success(data, Integer.class);
     }
 
 

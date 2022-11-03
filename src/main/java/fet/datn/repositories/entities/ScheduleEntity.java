@@ -39,4 +39,7 @@ public class ScheduleEntity {
 
     @Column(name = "time_created")
     private String timeCreated;
+
+    @Column(name = "location")
+    private String location;
 }

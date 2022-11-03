@@ -58,6 +58,7 @@ public class ScheduleService {
         entity.setTitle(requestBody.getTitle());
         entity.setCustomerNote(requestBody.getCustomerNote());
         entity.setTimeCreated(DateTimeUtils.getDateTimeNow());
+        entity.setStatus(Constants.SCHEDULE_STATUS.WAITING_CONFIRM);
 
         return scheduleRepository.save(entity);
     }

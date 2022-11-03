@@ -8,6 +8,7 @@ import fet.datn.repositories.ScheduleRepository;
 import fet.datn.repositories.entities.OrdinalNumberEntity;
 import fet.datn.utils.Constants;
 import fet.datn.utils.DateTimeUtils;
+import io.swagger.models.auth.In;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +23,6 @@ public class OrdinalNumberService {
     @Autowired
     private OrdinalNumberRepository ordinalNumberDao;
 
-    @Autowired
-    private ScheduleRepository scheduleRepository;
 
     public OrdinalNumberEntity genOrdinalNumber(Payload payload) {
         OrdinalNumberEntity ordinalNum = ordinalNumberDao.findOrdinalNumberByUserIdAndCreateTime(payload.getUserId());
@@ -48,6 +47,9 @@ public class OrdinalNumberService {
         return ordinalNumberDao.findOrdinalNumberByUserIdAndCreateTime(payload.getUserId());
     }
 
+    public Integer getNumberOfUserIsWaiting(Payload payload) {
+        return ordinalNumberDao.countUserIsWaiting(payload.getUserId());
+    }
 
     //TODO:  API for admin
 

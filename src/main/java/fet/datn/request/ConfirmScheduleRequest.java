@@ -6,4 +6,5 @@ import lombok.Data;
 public class ConfirmScheduleRequest {
     private String timeSchedule;
     private String employeeeeNote;
+    private String location;
 }
