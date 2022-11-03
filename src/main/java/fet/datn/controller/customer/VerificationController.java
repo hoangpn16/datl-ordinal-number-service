@@ -10,6 +10,9 @@ import fet.datn.request.VerificationRequest;
 import fet.datn.service.OtpService;
 import fet.datn.service.TokenService;
 import fet.datn.service.VerificationService;
+import fet.datn.service.impl.OtpServiceImpl;
+import fet.datn.service.impl.TokenServiceImpl;
+import fet.datn.service.impl.VerificationServiceImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,16 +31,16 @@ public class VerificationController {
     private static final Logger logger = LogManager.getLogger(VerificationController.class);
 
     @Autowired
-    private VerificationService verificationService;
+    private VerificationService verificationServiceImpl;
 
     @Autowired
-    private OtpService otpService;
+    private OtpService otpServiceImpl;
 
     @Autowired
     private OtpConfiguration otpConfiguration;
 
     @Autowired
-    private TokenService tokenService;
+    private TokenService tokenServiceImpl;
 
     @RequestMapping(value = "/otp/verify", method = RequestMethod.POST)
     public ResponseEntity verifyOtpCode(@RequestBody VerificationRequest verificationRequest) {
@@ -59,7 +62,7 @@ public class VerificationController {
             throw new AppException(ErrorCode.OTP_VERIFICATION_FAIL);
         }
 
-        List<OtpEntity> otpEntities = otpService.getNonDeletedOtpEntity(otpReferenceId);
+        List<OtpEntity> otpEntities = otpServiceImpl.getNonDeletedOtpEntity(otpReferenceId);
 
         if (otpEntities.isEmpty()) {
             logger.error("Cannot find OTP with [{}] otpReferenceId", otpReferenceId);
@@ -72,7 +75,7 @@ public class VerificationController {
         }
 
         OtpEntity otpEntity = otpEntities.get(0);
-        if (verificationService.isOtpVerified(otpEntity)) {
+        if (verificationServiceImpl.isOtpVerified(otpEntity)) {
             logger.error("OTP with [{}] otpReferenceId has been verified already", otpReferenceId);
             throw new AppException(ErrorCode.OTP_USED);
         }
@@ -83,21 +86,21 @@ public class VerificationController {
             throw new OtpException(ErrorCode.MAXIMUM_OTP_VERIFICATION_REACHED);
         }*/
 
-        if (verificationService.isOtpExpired(otpEntity)) {
+        if (verificationServiceImpl.isOtpExpired(otpEntity)) {
             logger.error("OTP with [{}] otpReferenceId has expired", otpReferenceId);
-            verificationService.createOtpVerificationEntity(otpEntity, false);
+            verificationServiceImpl.createOtpVerificationEntity(otpEntity, false);
             throw new AppException(ErrorCode.OTP_EXPIRED);
         }
 
-        if (!verificationService.isOtpCodeMatch(otpEntity, otpCode)) {
+        if (!verificationServiceImpl.isOtpCodeMatch(otpEntity, otpCode)) {
             logger.error("OTP code does not match");
-            verificationService.createOtpVerificationEntity(otpEntity, false);
+            verificationServiceImpl.createOtpVerificationEntity(otpEntity, false);
             throw new AppException(ErrorCode.OTP_VERIFICATION_FAIL);
         }
 
         logger.info("Verify OTP with [{}] otpReferenceId successful", otpReferenceId);
-        verificationService.createOtpVerificationEntity(otpEntity, true);
-        TokenEntity token = tokenService.genTokenCustomer(otpEntity);
+        verificationServiceImpl.createOtpVerificationEntity(otpEntity, true);
+        TokenEntity token = tokenServiceImpl.genTokenCustomer(otpEntity);
         return ResponseFactory.success(token, TokenEntity.class);
     }
 }

@@ -6,6 +6,7 @@ import fet.datn.factory.ResponseFactory;
 import fet.datn.interceptor.Payload;
 import fet.datn.repositories.entities.OrdinalNumberEntity;
 import fet.datn.service.OrdinalNumberService;
+import fet.datn.service.impl.OrdinalNumberServiceImpl;
 import fet.datn.utils.Definition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,34 +20,39 @@ public class OrdinalNumberController {
     private static final Logger logger = LoggerFactory.getLogger(OrdinalNumberController.class);
 
     @Autowired
-    private ResponseFactory factory;
-
-    @Autowired
     private OrdinalNumberService service;
 
     @PostMapping(value = "/ordinal-number")
     public ResponseEntity genOrdinalNumber(@RequestAttribute(name = Definition.PAYLOAD, required = false) Payload payload) {
-
+        if (payload == null) {
+            logger.info("Mã truy cập không hợp lệ");
+            throw new AppException(ErrorCode.TOKEN_NOT_FOUND);
+        }
         logger.info("User id [{}] get ordinal number", payload.getUserId());
         OrdinalNumberEntity data = service.genOrdinalNumber(payload);
-        return factory.success(data, OrdinalNumberEntity.class);
+        return ResponseFactory.success(data, OrdinalNumberEntity.class);
     }
 
     @GetMapping(value = "/ordinal-number")
     public ResponseEntity getNumberOfUser(@RequestAttribute(name = Definition.PAYLOAD, required = false) Payload payload) {
+        if (payload == null) {
+            logger.info("Mã truy cập không hợp lệ");
+            throw new AppException(ErrorCode.TOKEN_NOT_FOUND);
+        }
         logger.info("User id [{}] get number", payload.getUserId());
         OrdinalNumberEntity data = service.getNumberOfUser(payload);
-        return factory.success(data, OrdinalNumberEntity.class);
+        return ResponseFactory.success(data, OrdinalNumberEntity.class);
     }
 
     @GetMapping(value = "/ordinal-number/count-waiting")
     public ResponseEntity getNumberOfUserIsWaiting(@RequestAttribute(name = Definition.PAYLOAD, required = false) Payload payload) {
         if (payload == null) {
+            logger.info("Mã truy cập không hợp lệ");
             throw new AppException(ErrorCode.TOKEN_NOT_FOUND);
         }
         logger.info("User id [{}] get number of user is waiting", payload.getUserId());
         Integer data = service.getNumberOfUserIsWaiting(payload);
-        return factory.success(data, Integer.class);
+        return ResponseFactory.success(data, Integer.class);
     }
 
 

@@ -11,6 +11,9 @@ import fet.datn.response.OtpResponse;
 import fet.datn.service.OtpService;
 import fet.datn.service.SmsSenderService;
 import fet.datn.service.VerificationService;
+import fet.datn.service.impl.OtpServiceImpl;
+import fet.datn.service.impl.SmsSenderServiceImpl;
+import fet.datn.service.impl.VerificationServiceImpl;
 import fet.datn.utils.OtpTypeEnum;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -34,16 +37,16 @@ public class OtpController {
     private static final Logger logger = LogManager.getLogger(OtpController.class);
 
     @Autowired
-    private OtpService otpService;
+    private OtpService otpServiceImpl;
 
     @Autowired
     private OtpConfiguration otpConfiguration;
 
     @Autowired
-    private VerificationService verificationService;
+    private VerificationService verificationServiceImpl;
 
     @Autowired
-    private SmsSenderService smsSenderService;
+    private SmsSenderService smsSenderServiceImpl;
 
     @RequestMapping(value = "/otp/generate", method = RequestMethod.POST)
     public ResponseEntity generateOtp(@RequestBody OtpGenerationRequest request) throws Exception {
@@ -51,13 +54,13 @@ public class OtpController {
         ResponseEntity responseEntity = buildOtpGenerateVerificationResponse(request);
         if (responseEntity == null) {
             //TODO: sending otp via notification => must change to SMS when run production
-            OtpEntity otpEntity = otpService.generateOtp(request);
+            OtpEntity otpEntity = otpServiceImpl.generateOtp(request);
             OtpResponse response = new OtpResponse();
             response.setOtpReferenceId(otpEntity.getOtpReferenceId());
             response.setCreatedTimestamp(otpEntity.getCreatedTimestamp());
             response.setExpiredTimestamp(otpEntity.getExpiredTimestamp());
             responseEntity = ResponseFactory.success(response, OtpResponse.class);
-            smsSenderService.sendSmsMessage(otpEntity);
+            smsSenderServiceImpl.sendSmsMessage(otpEntity);
         }
         logger.info("========== End generate otp ==========");
         return responseEntity;
@@ -78,7 +81,7 @@ public class OtpController {
             throw new AppException(ErrorCode.OTP_REFERENCE_ID_IS_REQUIRED);
         }
 
-        List<OtpEntity> otpEntities = otpService.getOtpDetailsByOtpReferenceId(otpReferenceId);
+        List<OtpEntity> otpEntities = otpServiceImpl.getOtpDetailsByOtpReferenceId(otpReferenceId);
 
         if (otpEntities.isEmpty()) {
             logger.error("The [{}] otpReferenceId is not existed", otpReferenceId);
@@ -99,7 +102,7 @@ public class OtpController {
             throw new AppException(ErrorCode.CANT_INSTANT_REGENERATE_OTP_AFTER_CREATE);
         }
 
-        if (verificationService.isOtpVerified(otpEntity)) {
+        if (verificationServiceImpl.isOtpVerified(otpEntity)) {
             logger.error("OTP was already used. Cannot regenerate OTP");
             throw new AppException(ErrorCode.OTP_USED);
         }
@@ -109,13 +112,13 @@ public class OtpController {
             throw new AuthenException(AuthenErrorCode.OTP_EXPIRED);
         }*/
 
-        OtpEntity regenerateOtpEntity = otpService.regenerateOtp(otpEntity);
+        OtpEntity regenerateOtpEntity = otpServiceImpl.regenerateOtp(otpEntity);
         OtpResponse response = new OtpResponse();
         response.setOtpReferenceId(regenerateOtpEntity.getOtpReferenceId());
         response.setCreatedTimestamp(regenerateOtpEntity.getCreatedTimestamp());
         response.setExpiredTimestamp(regenerateOtpEntity.getExpiredTimestamp());
         ResponseEntity responseEntity = ResponseFactory.success(response, OtpResponse.class);
-        smsSenderService.sendSmsMessage(regenerateOtpEntity);
+        smsSenderServiceImpl.sendSmsMessage(regenerateOtpEntity);
         return responseEntity;
     }
 
