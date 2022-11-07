@@ -47,7 +47,8 @@ public class SmsSenderServiceImpl implements SmsSenderService {
         }
     }
 
-    private void sendMessageViaTele(String message) {
+    @Override
+    public void sendMessageViaTele(String message) {
         String urlSend = String.format(urlTele, chatIdTele, message);
         logger.info("Sending tele to url [{}]", urlSend);
         HttpHeaders httpHeaders = new HttpHeaders();

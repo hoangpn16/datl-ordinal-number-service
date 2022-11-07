@@ -26,6 +26,18 @@ public class AdminOrdinalNumberController {
     @Autowired
     private OrdinalNumberService service;
 
+    @PutMapping(value = "/location")
+    @ApiOperation(value = "API nhân viên chọn vị trí")
+    public ResponseEntity chooseLocation(@RequestAttribute(name = Definition.PAYLOAD, required = false) Payload payload,
+                                         @RequestParam("location") Integer location) {
+        if (payload == null) {
+            logger.info("Mã truy cập không hợp lệ");
+            throw new AppException(ErrorCode.TOKEN_NOT_FOUND);
+        }
+        service.chooseLocation(payload, location);
+        return ResponseFactory.success();
+    }
+
     @GetMapping(value = "/handle")
     @ApiOperation(value = "API lấy số để xử lí")
     public ResponseEntity handleNumber(@RequestAttribute(name = Definition.PAYLOAD, required = false) Payload payload) {
@@ -33,7 +45,7 @@ public class AdminOrdinalNumberController {
             logger.info("Mã truy cập không hợp lệ");
             throw new AppException(ErrorCode.TOKEN_NOT_FOUND);
         }
-        OrdinalNumberEntity data = service.handleNumber();
+        OrdinalNumberEntity data = service.handleNumber(payload);
         logger.info("Handle ordinal number [{}]", data.getOrdinalNumber());
         return ResponseFactory.success(data, OrdinalNumberEntity.class);
     }

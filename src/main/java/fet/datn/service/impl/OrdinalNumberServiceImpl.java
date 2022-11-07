@@ -3,9 +3,12 @@ package fet.datn.service.impl;
 import fet.datn.exceptions.AppException;
 import fet.datn.exceptions.ErrorCode;
 import fet.datn.interceptor.Payload;
+import fet.datn.repositories.EmployeesRepository;
 import fet.datn.repositories.OrdinalNumberRepository;
+import fet.datn.repositories.entities.EmployeesEntity;
 import fet.datn.repositories.entities.OrdinalNumberEntity;
 import fet.datn.service.OrdinalNumberService;
+import fet.datn.service.SmsSenderService;
 import fet.datn.utils.Constants;
 import fet.datn.utils.DateTimeUtils;
 import org.slf4j.Logger;
@@ -21,6 +24,12 @@ public class OrdinalNumberServiceImpl implements OrdinalNumberService {
 
     @Autowired
     private OrdinalNumberRepository ordinalNumberDao;
+
+    @Autowired
+    private SmsSenderService smsSenderService;
+
+    @Autowired
+    private EmployeesRepository employeesRepository;
 
     @Override
     public OrdinalNumberEntity genOrdinalNumber(Payload payload) {
@@ -54,9 +63,19 @@ public class OrdinalNumberServiceImpl implements OrdinalNumberService {
 
     //TODO:  API for admin
     @Override
-    public OrdinalNumberEntity handleNumber() {
+    public void chooseLocation(Payload payload, Integer location) {
+        EmployeesEntity em = employeesRepository.findOneByUserId(payload.getUserId());
+        em.setLocation(location);
+        employeesRepository.save(em);
+    }
+
+    @Override
+    public OrdinalNumberEntity handleNumber(Payload payload) {
         OrdinalNumberEntity entity = ordinalNumberDao.findNextOrdinalNumber();
         entity.setStatus(Constants.STATUS.IS_PROCESSING);
+        EmployeesEntity em = employeesRepository.findOneByUserId(payload.getUserId());
+        String mess = String.format("Xin mời khách hàng có số thứ tự %s vào cửa số %d", entity.getOrdinalNumber(), em.getLocation());
+        smsSenderService.sendMessageViaTele(mess);
         return entity;
     }
 

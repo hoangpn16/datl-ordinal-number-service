@@ -36,4 +36,10 @@ public class EmployeesEntity {
 
     @Column(name = "modified_time")
     private String modifiedTime;
+
+    @Column(name = "role")
+    private String role;
+
+    @Column(name = "location")
+    private Integer location = 0;
 }

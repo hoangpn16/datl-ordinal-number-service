@@ -13,7 +13,9 @@ public interface OrdinalNumberService {
     Integer getNumberOfUserIsWaiting(Payload payload);
 
     //TODO:  API for admin
-    OrdinalNumberEntity handleNumber();
+    void chooseLocation(Payload payload, Integer location);
+
+    OrdinalNumberEntity handleNumber(Payload payload);
 
     OrdinalNumberEntity updateStatus(Long id, Integer status);
 
