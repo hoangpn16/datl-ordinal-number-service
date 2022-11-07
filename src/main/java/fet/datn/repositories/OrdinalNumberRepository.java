@@ -25,7 +25,7 @@ public interface OrdinalNumberRepository extends JpaRepository<OrdinalNumberEnti
 
     List<OrdinalNumberEntity> findAllByStatus(Integer status);
 
-    @Query(nativeQuery = true, value = "SELECT COUNT(*) FROM `ORDINAL_NUMBERS` WHERE `status` = 0 AND DATE(created_time) = DATE(CURRENT_DATE) AND id < (SELECT `id` FROM ORDINAL_NUMBERS WHERE `user_id` = :userId)")
+    @Query(nativeQuery = true, value = "SELECT COUNT(*) FROM `ORDINAL_NUMBERS` WHERE `status` = 0 AND DATE(created_time) = DATE(CURRENT_DATE) AND id < (SELECT `id` FROM ORDINAL_NUMBERS WHERE `user_id` = :userId AND DATE(created_time) = DATE(CURRENT_DATE))")
     Integer countUserIsWaiting(@Param("userId") Long userId);
 
 

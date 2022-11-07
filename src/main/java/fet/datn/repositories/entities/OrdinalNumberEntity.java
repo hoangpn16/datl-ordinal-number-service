@@ -33,4 +33,7 @@ public class OrdinalNumberEntity {
 
     @Column(name = "time_completed")
     private String timeCompleted;
+
+    @Transient
+    private Integer numberWaiting = 0;
 }

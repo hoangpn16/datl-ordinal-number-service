@@ -47,13 +47,22 @@ public class OrdinalNumberServiceImpl implements OrdinalNumberService {
 
         Integer count = ordinalNumberDao.countOrdinalNumber();
         ordinalNum.setOrdinalNumber(count + 1);
+        ordinalNum = ordinalNumberDao.save(ordinalNum);
+        ordinalNum.setNumberWaiting(ordinalNumberDao.countUserIsWaiting(payload.getUserId()));
 
-        return ordinalNumberDao.save(ordinalNum);
+        return ordinalNum;
     }
 
     @Override
     public OrdinalNumberEntity getNumberOfUser(Payload payload) {
-        return ordinalNumberDao.findOrdinalNumberByUserIdAndCreateTime(payload.getUserId());
+        OrdinalNumberEntity oNum = ordinalNumberDao.findOrdinalNumberByUserIdAndCreateTime(payload.getUserId());
+        if (oNum == null) {
+            return null;
+        }
+        Integer countWaiting = ordinalNumberDao.countUserIsWaiting(payload.getUserId());
+        if (countWaiting != null)
+            oNum.setNumberWaiting(countWaiting);
+        return oNum;
     }
 
     @Override
