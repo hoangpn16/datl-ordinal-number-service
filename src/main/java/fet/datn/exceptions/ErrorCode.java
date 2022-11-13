@@ -42,7 +42,8 @@ public enum ErrorCode {
     PASSWORD_NOT_MERGE(HttpStatus.BAD_REQUEST, "FET-621", "Nhập lại mật khẩu không chính xác"),
     CANT_BOOK_SCHEDULE(HttpStatus.BAD_REQUEST, "FET-622", "Không thể đặt lịch do đã có lịch chưa được xử lí"),
     CANT_UPDATE_SCHEDULE(HttpStatus.BAD_REQUEST, "FET-623", "Bạn không thể chỉnh sửa do lịch hẹn đã hoàn thành"),
-    CANT_DELETE_SCHEDULE(HttpStatus.BAD_REQUEST, "FET-624", "Bạn xóa lịch hẹn");
+    CANT_DELETE_SCHEDULE(HttpStatus.BAD_REQUEST, "FET-624", "Bạn xóa lịch hẹn"),
+    DONT_HAS_CUSTOMER(HttpStatus.BAD_REQUEST,"FET-625","Không có khách hàng cần xử lí");
 
 
     private final HttpStatus status;

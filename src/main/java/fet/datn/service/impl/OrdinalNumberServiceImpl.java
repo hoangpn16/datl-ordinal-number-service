@@ -81,6 +81,9 @@ public class OrdinalNumberServiceImpl implements OrdinalNumberService {
     @Override
     public OrdinalNumberEntity handleNumber(Payload payload) {
         OrdinalNumberEntity entity = ordinalNumberDao.findNextOrdinalNumber();
+        if(entity == null){
+            throw new AppException(ErrorCode.DONT_HAS_CUSTOMER);
+        }
         entity.setStatus(Constants.STATUS.IS_PROCESSING);
         EmployeesEntity em = employeesRepository.findOneByUserId(payload.getUserId());
         String mess = String.format("Xin mời khách hàng có số thứ tự %s vào cửa số %d", entity.getOrdinalNumber(), em.getLocation());
