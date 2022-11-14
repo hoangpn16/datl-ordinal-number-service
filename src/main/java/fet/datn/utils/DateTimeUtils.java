@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.*;
 
 public class DateTimeUtils {
     private static final Logger logger = LoggerFactory.getLogger(DateTimeUtils.class);
@@ -40,6 +40,29 @@ public class DateTimeUtils {
         } catch (ParseException e) {
             logger.info("Datetime is not valid", from, to);
             throw new AppException(ErrorCode.DATE_NOT_VALID);
+        }
+    }
+
+    public static void getDaysBetweenDates(String startdate, String enddate) throws ParseException {
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+        Date start = sf.parse(startdate);
+        Date end = sf.parse(enddate);
+        if (start.compareTo(end) > 0) {
+            logger.info("Startdate and endate invalid");
+            throw new AppException(ErrorCode.DATE_NOT_VALID);
+        }
+
+        List<String> dates = new ArrayList<>();
+        Calendar calendar = new GregorianCalendar();
+        calendar.setTime(start);
+
+        while (!calendar.getTime().after(end)) {
+            Date result = calendar.getTime();
+            dates.add(sf.format(result));
+            calendar.add(Calendar.DATE, 1);
+        }
+        if(dates.size() > 11){
+            throw new AppException(ErrorCode.RANGE_DATE_INVALID);
         }
     }
 

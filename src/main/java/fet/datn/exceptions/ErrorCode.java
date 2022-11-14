@@ -43,7 +43,8 @@ public enum ErrorCode {
     CANT_BOOK_SCHEDULE(HttpStatus.BAD_REQUEST, "FET-622", "Không thể đặt lịch do đã có lịch chưa được xử lí"),
     CANT_UPDATE_SCHEDULE(HttpStatus.BAD_REQUEST, "FET-623", "Bạn không thể chỉnh sửa do lịch hẹn đã hoàn thành"),
     CANT_DELETE_SCHEDULE(HttpStatus.BAD_REQUEST, "FET-624", "Bạn xóa lịch hẹn"),
-    DONT_HAS_CUSTOMER(HttpStatus.BAD_REQUEST,"FET-625","Không có khách hàng cần xử lí");
+    DONT_HAS_CUSTOMER(HttpStatus.BAD_REQUEST,"FET-625","Không có khách hàng cần xử lí"),
+    RANGE_DATE_INVALID(HttpStatus.BAD_REQUEST,"FET-626","Chọn khoảng ngày không quá 10 ngày");
 
 
     private final HttpStatus status;

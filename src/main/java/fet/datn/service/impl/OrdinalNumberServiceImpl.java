@@ -8,6 +8,7 @@ import fet.datn.repositories.EmployeesRepository;
 import fet.datn.repositories.OrdinalNumberRepository;
 import fet.datn.repositories.entities.EmployeesEntity;
 import fet.datn.repositories.entities.OrdinalNumberEntity;
+import fet.datn.response.ReportModel;
 import fet.datn.service.OrdinalNumberService;
 import fet.datn.service.SmsSenderService;
 import fet.datn.utils.Constants;
@@ -17,9 +18,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.ParseException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,13 +39,23 @@ public class OrdinalNumberServiceImpl implements OrdinalNumberService {
     private DataDao dataDao;
 
     @Override
-    public Map<String, Integer> getReportCustomer() {
-        Map<String, Integer> data = dataDao.reportCustomer();
-        Map<String, Integer> details = data.entrySet()
-                .stream()
-                .sorted((o1, o2) -> o1.getKey().compareTo(o2.getKey()))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (oldValue, newValue) -> oldValue, LinkedHashMap::new));
-        return details;
+    public List<ReportModel> getReportCustomer(String from, String to) {
+        DateTimeUtils.validateDateTime(from, to);
+        try {
+            DateTimeUtils.getDaysBetweenDates(from,to);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        List<ReportModel> data = dataDao.reportCustomer(from, to);
+        if (data.size() > 1) {
+            Collections.sort(data, new Comparator<ReportModel>() {
+                @Override
+                public int compare(ReportModel o1, ReportModel o2) {
+                    return o1.getDate().compareTo(o2.getDate());
+                }
+            });
+        }
+        return data;
     }
 
     @Override
