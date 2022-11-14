@@ -81,6 +81,17 @@ public class AdminController {
         return ResponseFactory.success(data, EmployeesEntity.class);
     }
 
+    @GetMapping(value = "/profile")
+    public ResponseEntity getProfile(@RequestAttribute(name = Definition.PAYLOAD, required = false) Payload payload) {
+        if (payload == null) {
+            logger.info("Mã truy cập không hợp lệ");
+            throw new AppException(ErrorCode.TOKEN_NOT_FOUND);
+        }
+        logger.info("User [{}] get profile");
+        EmployeesEntity data = service.getProfile(payload);
+        return ResponseFactory.success(data, EmployeesEntity.class);
+    }
+
     @PutMapping("/avatar")
     @ApiOperation(value = "API cập nhật avatar")
     public ResponseEntity uploadAvatar(@RequestBody UploadImage body, @RequestAttribute(name = Definition.PAYLOAD, required = false) Payload payload) {

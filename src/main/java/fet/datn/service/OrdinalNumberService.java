@@ -2,10 +2,16 @@ package fet.datn.service;
 
 import fet.datn.interceptor.Payload;
 import fet.datn.repositories.entities.OrdinalNumberEntity;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
+import java.util.Map;
 
 public interface OrdinalNumberService {
+
+
+    Map<String, Integer> getReportCustomer();
+
     OrdinalNumberEntity genOrdinalNumber(Payload payload);
 
     OrdinalNumberEntity getNumberOfUser(Payload payload);

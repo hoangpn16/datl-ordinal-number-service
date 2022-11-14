@@ -1,5 +1,6 @@
 package fet.datn.service;
 
+import fet.datn.interceptor.Payload;
 import fet.datn.repositories.entities.EmployeesEntity;
 import fet.datn.repositories.entities.TokenEntity;
 import fet.datn.request.LoginRequest;
@@ -9,4 +10,6 @@ public interface AdminService {
     TokenEntity login(LoginRequest requestBody);
 
     EmployeesEntity register(RegisterRequest requestBody);
+
+    EmployeesEntity getProfile(Payload payload);
 }

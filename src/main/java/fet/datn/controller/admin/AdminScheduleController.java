@@ -40,6 +40,23 @@ public class AdminScheduleController {
         return service.findAllSchedule(status, orderBy, direction, pageNum, pageSize);
     }
 
+    @GetMapping(value = "/report")
+    @ApiOperation(value = "API CMS lấy báo cáo lịch hẹn")
+    public ResponseEntity getAllScheduleByStatus(@RequestAttribute(name = Definition.PAYLOAD, required = false) Payload payload,
+                                                 @RequestParam(value = "from", required = true) String start,
+                                                 @RequestParam(value = "to", required = true) String end,
+                                                 @RequestParam(value = "orderBy", required = false, defaultValue = "id") String orderBy,
+                                                 @RequestParam(value = "direction", required = false, defaultValue = "DESC") String direction,
+                                                 @RequestParam(value = "pageNum", required = false, defaultValue = "0") Integer pageNum,
+                                                 @RequestParam(value = "pageSize", required = false, defaultValue = "20") Integer pageSize) {
+        if (payload == null) {
+            logger.info("Mã truy cập không hợp lệ");
+            throw new AppException(ErrorCode.TOKEN_NOT_FOUND);
+        }
+        logger.info("Get report schedule start [{}] end [{}],orderBy [{}] direction [{}] pageNum [{}] pageSize [{}]", start, end, orderBy, direction, pageNum, pageSize);
+        return service.getReportSchedule(payload, start, end, orderBy, direction, pageNum, pageSize);
+    }
+
     @PutMapping(value = "/{id}")
     @ApiOperation(value = "API CMS phê duyệt lịch hẹn")
     public ResponseEntity confirmSchedule(@RequestAttribute(name = Definition.PAYLOAD, required = false) Payload payload,

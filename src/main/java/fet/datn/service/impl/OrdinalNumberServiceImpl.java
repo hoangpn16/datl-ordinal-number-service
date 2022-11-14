@@ -3,6 +3,7 @@ package fet.datn.service.impl;
 import fet.datn.exceptions.AppException;
 import fet.datn.exceptions.ErrorCode;
 import fet.datn.interceptor.Payload;
+import fet.datn.repositories.DataDao;
 import fet.datn.repositories.EmployeesRepository;
 import fet.datn.repositories.OrdinalNumberRepository;
 import fet.datn.repositories.entities.EmployeesEntity;
@@ -16,7 +17,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class OrdinalNumberServiceImpl implements OrdinalNumberService {
@@ -30,6 +34,19 @@ public class OrdinalNumberServiceImpl implements OrdinalNumberService {
 
     @Autowired
     private EmployeesRepository employeesRepository;
+
+    @Autowired
+    private DataDao dataDao;
+
+    @Override
+    public Map<String, Integer> getReportCustomer() {
+        Map<String, Integer> data = dataDao.reportCustomer();
+        Map<String, Integer> details = data.entrySet()
+                .stream()
+                .sorted((o1, o2) -> o1.getKey().compareTo(o2.getKey()))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (oldValue, newValue) -> oldValue, LinkedHashMap::new));
+        return details;
+    }
 
     @Override
     public OrdinalNumberEntity genOrdinalNumber(Payload payload) {
@@ -81,7 +98,7 @@ public class OrdinalNumberServiceImpl implements OrdinalNumberService {
     @Override
     public OrdinalNumberEntity handleNumber(Payload payload) {
         OrdinalNumberEntity entity = ordinalNumberDao.findNextOrdinalNumber();
-        if(entity == null){
+        if (entity == null) {
             throw new AppException(ErrorCode.DONT_HAS_CUSTOMER);
         }
         entity.setStatus(Constants.STATUS.IS_PROCESSING);
@@ -104,7 +121,8 @@ public class OrdinalNumberServiceImpl implements OrdinalNumberService {
 
     @Override
     public List<OrdinalNumberEntity> getOrdinalNumberByStatus(Integer status) {
-        return ordinalNumberDao.findAllByStatus(status);
+        String date = DateTimeUtils.getCurrentDate();
+        return ordinalNumberDao.findAllByStatusAndCreatedTimeGreaterThan(status, date);
     }
 
 

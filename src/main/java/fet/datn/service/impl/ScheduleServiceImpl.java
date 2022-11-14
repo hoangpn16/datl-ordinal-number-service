@@ -24,7 +24,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 
-
 import java.util.List;
 import java.util.Objects;
 
@@ -43,6 +42,19 @@ public class ScheduleServiceImpl implements ScheduleService {
         }
         PageRequest pageRequest = PageRequest.of(pageNum, pageSize, sort);
         Page pageResult = scheduleRepository.findAllByCustomerId(payload.getUserId(), pageRequest);
+        PageResponse pageResponse = PageResponseUtil.buildPageResponse(pageResult);
+        return ResponseFactory.success(pageResult.getContent(), pageResponse);
+    }
+
+    @Override
+    public ResponseEntity getReportSchedule(Payload payload, String start, String end, String orderBy, String direction, Integer pageNum, Integer pageSize) {
+        DateTimeUtils.validateDateTime(start, end);
+        Sort sort = Sort.by(Sort.Direction.ASC, orderBy);
+        if (Sort.Direction.DESC.name().equals(direction)) {
+            sort = Sort.by(Sort.Direction.DESC, orderBy);
+        }
+        PageRequest pageRequest = PageRequest.of(pageNum, pageSize, sort);
+        Page pageResult = scheduleRepository.findAllByTimeCreated(start, end, pageRequest);
         PageResponse pageResponse = PageResponseUtil.buildPageResponse(pageResult);
         return ResponseFactory.success(pageResult.getContent(), pageResponse);
     }

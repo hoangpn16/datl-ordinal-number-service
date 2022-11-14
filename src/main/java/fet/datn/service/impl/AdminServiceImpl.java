@@ -2,6 +2,7 @@ package fet.datn.service.impl;
 
 import fet.datn.exceptions.AppException;
 import fet.datn.exceptions.ErrorCode;
+import fet.datn.interceptor.Payload;
 import fet.datn.repositories.EmployeesRepository;
 import fet.datn.repositories.entities.EmployeesEntity;
 import fet.datn.repositories.entities.TokenEntity;
@@ -65,6 +66,11 @@ public class AdminServiceImpl implements AdminService {
         em.setCreatedTime(DateTimeUtils.getDateTimeNow());
         em.setModifiedTime(DateTimeUtils.getDateTimeNow());
         return employeesDao.save(em);
+    }
+
+    @Override
+    public EmployeesEntity getProfile(Payload payload) {
+        return employeesDao.findOneByUserId(payload.getUserId());
     }
 
 
