@@ -115,18 +115,14 @@ public class AdminController {
 
     @GetMapping("/avatar")
     @ApiOperation(value = "API load avatar")
-    public ResponseEntity viewAvatar(@RequestAttribute(name = Definition.PAYLOAD, required = false) Payload payload, HttpServletRequest request) {
-        if (payload == null) {
-            logger.info("Mã truy cập không hợp lệ");
-            throw new AppException(ErrorCode.TOKEN_NOT_FOUND);
-        }
-        EmployeesEntity entity = employeesRepository.findOneByUserId(payload.getUserId());
+    public ResponseEntity viewAvatar(@RequestParam("userId") Long userId, HttpServletRequest request) {
+        EmployeesEntity entity = employeesRepository.findOneByUserId(userId);
         Resource resource = null;
         try {
-            resource = fileStorageService.loadImage(payload.getUserId(), entity.getAvatar());
+            resource = fileStorageService.loadImage(userId, entity.getAvatar());
         } catch (Exception e) {
             e.printStackTrace();
-            logger.info("Khong tim thay avatar cua userId {} ", payload.getUserId());
+            logger.info("Khong tim thay avatar cua userId {} ", userId);
             throw new AppException(ErrorCode.ENTITY_NOT_EXISTS);
         }
 

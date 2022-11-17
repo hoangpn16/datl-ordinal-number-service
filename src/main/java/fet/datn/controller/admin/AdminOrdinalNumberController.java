@@ -5,6 +5,7 @@ import fet.datn.exceptions.ErrorCode;
 import fet.datn.factory.ResponseFactory;
 import fet.datn.interceptor.Payload;
 import fet.datn.repositories.entities.OrdinalNumberEntity;
+import fet.datn.response.ReportModel;
 import fet.datn.service.OrdinalNumberService;
 import fet.datn.service.impl.OrdinalNumberServiceImpl;
 import fet.datn.utils.Definition;
@@ -29,13 +30,15 @@ public class AdminOrdinalNumberController {
 
     @GetMapping(value = "/report")
     @ApiOperation(value = "API CMS lấy báo cáo khách hàng")
-    public ResponseEntity getAllScheduleByStatus(@RequestAttribute(name = Definition.PAYLOAD, required = false) Payload payload) {
-//        if (payload == null) {
-//            logger.info("Mã truy cập không hợp lệ");
-//            throw new AppException(ErrorCode.TOKEN_NOT_FOUND);
-//        }
-        Map<String, Integer> data = service.getReportCustomer();
-        return ResponseFactory.success(data, Map.class);
+    public ResponseEntity getAllScheduleByStatus(@RequestAttribute(name = Definition.PAYLOAD, required = false) Payload payload,
+                                                 @RequestParam("from") String from,
+                                                 @RequestParam("to") String to) {
+        if (payload == null) {
+            logger.info("Mã truy cập không hợp lệ");
+            throw new AppException(ErrorCode.TOKEN_NOT_FOUND);
+        }
+        List<ReportModel> data = service.getReportCustomer(from, to);
+        return ResponseFactory.success(data, List.class);
     }
 
     @PutMapping(value = "/location")

@@ -1,6 +1,7 @@
 package fet.datn.repositories.daoimpl;
 
 import fet.datn.repositories.DataDao;
+import fet.datn.response.ReportModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +9,9 @@ import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Repository
@@ -61,19 +64,25 @@ public class DataDaoImpl implements DataDao {
 
 
     @Override
-    public Map<String, Integer> reportCustomer() {
+    public List<ReportModel> reportCustomer(String from, String to) {
         Connection con = null;
         PreparedStatement pst = null;
         ResultSet rs = null;
-        Map<String, Integer> data = new HashMap<>();
+        List<ReportModel> data = new ArrayList<>();
 
         try {
-            String sql = "SELECT DATE(created_time) date,COUNT(ordinal_number) count FROM `ORDINAL_NUMBERS` GROUP BY DATE(created_time)";
+            String sql = "SELECT DATE(created_time) date,COUNT(ordinal_number) count FROM `ORDINAL_NUMBERS` WHERE DATE(created_time) BETWEEN ? AND ? GROUP BY DATE(created_time)";
             con = dataSource.getConnection();
             pst = con.prepareStatement(sql);
+            pst.setString(1, from);
+            pst.setString(2, to);
             rs = pst.executeQuery();
             while (rs.next()) {
-                data.put(rs.getString("date"), rs.getInt("count"));
+                ReportModel entity = new ReportModel();
+                entity.setDate(rs.getString("date"));
+                entity.setTotal(rs.getInt("count"));
+
+                data.add(entity);
             }
 
         } catch (Exception e) {
