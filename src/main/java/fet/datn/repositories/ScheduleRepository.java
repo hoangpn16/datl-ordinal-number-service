@@ -20,7 +20,7 @@ public interface ScheduleRepository extends JpaRepository<ScheduleEntity, Long> 
 
     Page findAllByStatus(Integer status, Pageable pageable);
 
-    Page findAll(Pageable pageable);
+    Page findAllByStatusIn(Pageable pageable,List<Integer> status);
 
     @Query(nativeQuery = true, value = "SELECT * FROM MANAGE_SCHEDULES WHERE DATE(time_created) BETWEEN ?1 AND ?2", countQuery = "SELECT COUNT(*) FROM MANAGE_SCHEDULES WHERE DATE(time_created) BETWEEN ?1 AND ?2")
     Page<ScheduleEntity> findAllByTimeCreated(String start, String end, Pageable pageable);

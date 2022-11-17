@@ -24,6 +24,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -158,7 +159,10 @@ public class ScheduleServiceImpl implements ScheduleService {
         if (Objects.nonNull(status)) {
             pageResult = scheduleRepository.findAllByStatus(status, pageRequest);
         } else {
-            pageResult = scheduleRepository.findAll(pageRequest);
+            List<Integer> statusLis = new ArrayList<>();
+            statusLis.add(0);
+            statusLis.add(1);
+            pageResult = scheduleRepository.findAllByStatusIn(pageRequest,statusLis);
         }
 
         PageResponse pageResponse = PageResponseUtil.buildPageResponse(pageResult);

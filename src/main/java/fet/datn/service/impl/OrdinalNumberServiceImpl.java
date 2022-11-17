@@ -105,7 +105,7 @@ public class OrdinalNumberServiceImpl implements OrdinalNumberService {
         EmployeesEntity em = employeesRepository.findOneByUserId(payload.getUserId());
         String mess = String.format("Xin mời khách hàng có số thứ tự %s vào cửa số %d", entity.getOrdinalNumber(), em.getLocation());
         smsSenderService.sendMessageViaTele(mess);
-        return entity;
+        return ordinalNumberDao.save(entity);
     }
 
     @Override
