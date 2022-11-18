@@ -11,6 +11,7 @@ import fet.datn.repositories.entities.ScheduleEntity;
 import fet.datn.request.ConfirmScheduleRequest;
 import fet.datn.request.ScheduleRequest;
 import fet.datn.service.ScheduleService;
+import fet.datn.service.SmsSenderService;
 import fet.datn.utils.AppUtils;
 import fet.datn.utils.Constants;
 import fet.datn.utils.DateTimeUtils;
@@ -34,6 +35,9 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Autowired
     private ScheduleRepository scheduleRepository;
+
+    @Autowired
+    private SmsSenderService senderService;
 
     @Override
     public ResponseEntity getAllSchedule(Payload payload, String orderBy, String direction, Integer pageNum, Integer pageSize) {
@@ -132,6 +136,11 @@ public class ScheduleServiceImpl implements ScheduleService {
         entity.setTimeConfirm(DateTimeUtils.getDateTimeNow());
         entity.setStatus(Constants.SCHEDULE_STATUS.CONFIRM);
 
+        String mess = "Lịch hẹn của bạn đã được xác nhận , mời bạn hẹn gặp vào lúc " + requestBody.getTimeSchedule() + "tại " + requestBody.getLocation()
+                + ". Vui lòng xem thông tin chi tiết trên hệ thống.";
+
+        senderService.sendMessageViaTele(mess);
+
         return scheduleRepository.save(entity);
     }
 
@@ -162,7 +171,7 @@ public class ScheduleServiceImpl implements ScheduleService {
             List<Integer> statusLis = new ArrayList<>();
             statusLis.add(0);
             statusLis.add(1);
-            pageResult = scheduleRepository.findAllByStatusIn(pageRequest,statusLis);
+            pageResult = scheduleRepository.findAllByStatusIn(pageRequest, statusLis);
         }
 
         PageResponse pageResponse = PageResponseUtil.buildPageResponse(pageResult);
