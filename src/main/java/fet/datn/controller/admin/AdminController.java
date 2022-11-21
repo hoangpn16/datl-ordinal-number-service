@@ -7,10 +7,7 @@ import fet.datn.interceptor.Payload;
 import fet.datn.repositories.EmployeesRepository;
 import fet.datn.repositories.entities.EmployeesEntity;
 import fet.datn.repositories.entities.TokenEntity;
-import fet.datn.request.LoginRequest;
-import fet.datn.request.RegisterRequest;
-import fet.datn.request.UpdateInforRequest;
-import fet.datn.request.UploadImage;
+import fet.datn.request.*;
 import fet.datn.service.AdminService;
 import fet.datn.service.EmployeeService;
 import fet.datn.service.FileStorageService;
@@ -30,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.Locale;
 
 @RestController
 @RequestMapping(value = "/admin")
@@ -65,6 +63,19 @@ public class AdminController {
         }
         logger.info("Register request with body [{}]", requestBody.toString());
         EmployeesEntity data = service.register(requestBody);
+        return ResponseFactory.success(data, EmployeesEntity.class);
+    }
+
+    @PutMapping(value = "/change-password")
+    @ApiOperation(value = "API đổi mật khẩu")
+    public ResponseEntity changePassword(@RequestAttribute(name = Definition.PAYLOAD, required = false) Payload payload,
+                                         @RequestBody ChangePassword requestBody) {
+        if (payload == null) {
+            logger.info("Mã truy cập không hợp lệ");
+            throw new AppException(ErrorCode.TOKEN_NOT_FOUND);
+        }
+        logger.info("Change password account [{}]", requestBody.getUsername());
+        EmployeesEntity data = employeeServiceImpl.changePassword(payload, requestBody);
         return ResponseFactory.success(data, EmployeesEntity.class);
     }
 

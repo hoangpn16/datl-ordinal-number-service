@@ -44,7 +44,9 @@ public enum ErrorCode {
     CANT_UPDATE_SCHEDULE(HttpStatus.BAD_REQUEST, "FET-623", "Bạn không thể chỉnh sửa do lịch hẹn đã hoàn thành"),
     CANT_DELETE_SCHEDULE(HttpStatus.BAD_REQUEST, "FET-624", "Bạn xóa lịch hẹn"),
     DONT_HAS_CUSTOMER(HttpStatus.BAD_REQUEST,"FET-625","Không có khách hàng cần xử lí"),
-    RANGE_DATE_INVALID(HttpStatus.BAD_REQUEST,"FET-626","Chọn khoảng ngày không quá 10 ngày");
+    RANGE_DATE_INVALID(HttpStatus.BAD_REQUEST,"FET-626","Chọn khoảng ngày không quá 10 ngày"),
+    PASSAGAIN_INVALID(HttpStatus.BAD_REQUEST,"FET-627","Nhập lại mật khẩu không chính xác"),
+    NOT_PERMISSION(HttpStatus.BAD_REQUEST,"GET-628","Bạn không có quyền thực hiện");
 
 
     private final HttpStatus status;
