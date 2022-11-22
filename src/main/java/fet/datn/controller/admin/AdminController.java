@@ -66,7 +66,7 @@ public class AdminController {
         return ResponseFactory.success(data, EmployeesEntity.class);
     }
 
-    @PutMapping(value = "/change-password")
+    @PostMapping(value = "/change-password")
     @ApiOperation(value = "API đổi mật khẩu")
     public ResponseEntity changePassword(@RequestAttribute(name = Definition.PAYLOAD, required = false) Payload payload,
                                          @RequestBody ChangePassword requestBody) {
