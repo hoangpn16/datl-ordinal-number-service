@@ -153,4 +153,9 @@ public class AdminController {
                 .body(resource);
 
     }
+
+    @GetMapping(value = "/ping")
+    public ResponseEntity ping() {
+        return ResponseFactory.success();
+    }
 }
