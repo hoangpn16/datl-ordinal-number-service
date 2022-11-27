@@ -136,7 +136,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         entity.setTimeConfirm(DateTimeUtils.getDateTimeNow());
         entity.setStatus(Constants.SCHEDULE_STATUS.CONFIRM);
 
-        String mess = "Lịch hẹn của bạn đã được xác nhận , mời bạn hẹn gặp vào lúc " + requestBody.getTimeSchedule() + "tại " + requestBody.getLocation()
+        String mess = "Lịch hẹn của bạn đã được xác nhận , mời bạn hẹn gặp vào lúc " + requestBody.getTimeSchedule() + " tại " + requestBody.getLocation()
                 + ". Vui lòng xem thông tin chi tiết trên hệ thống.";
 
         senderService.sendMessageViaTele(mess);
