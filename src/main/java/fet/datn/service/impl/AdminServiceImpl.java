@@ -49,8 +49,11 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public EmployeesEntity register(RegisterRequest requestBody) {
-
         EmployeesEntity em = employeesDao.findOneByUserName(requestBody.getUsername());
+        if (!em.getRole().equals("ADMIN")) {
+            logger.error("Dont have permission");
+            throw new AppException(ErrorCode.NOT_PERMISSION);
+        }
         if (em != null) {
             logger.error("Employee with [{}] username is existed", requestBody.getUsername());
             throw new AppException(ErrorCode.ENTITY_EXISTED);
@@ -66,6 +69,7 @@ public class AdminServiceImpl implements AdminService {
         em.setPassword(new BCryptPasswordEncoder().encode(requestBody.getPassword()));
         em.setCreatedTime(DateTimeUtils.getDateTimeNow());
         em.setModifiedTime(DateTimeUtils.getDateTimeNow());
+        em.setRole(requestBody.getRole());
         return employeesDao.save(em);
     }
 
