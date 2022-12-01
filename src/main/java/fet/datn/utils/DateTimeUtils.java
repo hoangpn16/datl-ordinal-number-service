@@ -43,7 +43,7 @@ public class DateTimeUtils {
         }
     }
 
-    public static void getDaysBetweenDates(String startdate, String enddate) throws ParseException {
+    public static List<String> getDaysBetweenDates(String startdate, String enddate) throws ParseException {
         SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
         Date start = sf.parse(startdate);
         Date end = sf.parse(enddate);
@@ -61,9 +61,10 @@ public class DateTimeUtils {
             dates.add(sf.format(result));
             calendar.add(Calendar.DATE, 1);
         }
-        if(dates.size() > 11){
+        if (dates.size() > 11) {
             throw new AppException(ErrorCode.RANGE_DATE_INVALID);
         }
+        return dates;
     }
 
 

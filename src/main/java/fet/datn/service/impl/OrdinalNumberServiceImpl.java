@@ -39,23 +39,31 @@ public class OrdinalNumberServiceImpl implements OrdinalNumberService {
     private DataDao dataDao;
 
     @Override
-    public List<ReportModel> getReportCustomer(String from, String to) {
+    public List<ReportModel> getReportCustomer(String from, String to) throws ParseException {
         DateTimeUtils.validateDateTime(from, to);
-        try {
-            DateTimeUtils.getDaysBetweenDates(from,to);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+
+        List<String> dates = DateTimeUtils.getDaysBetweenDates(from, to);
+
         List<ReportModel> data = dataDao.reportCustomer(from, to);
-        if (data.size() > 1) {
-            Collections.sort(data, new Comparator<ReportModel>() {
+        List<String> lsDateEx = data.stream().map(e -> e.getDate()).collect(Collectors.toList());
+
+        List<ReportModel> dataFn = new ArrayList<>();
+        for (String dt : dates) {
+            if (!lsDateEx.contains(dt)) {
+                dataFn.add(new ReportModel(dt, 0));
+            }
+        }
+        dataFn.addAll(data);
+
+        if (dataFn.size() > 1) {
+            Collections.sort(dataFn, new Comparator<ReportModel>() {
                 @Override
                 public int compare(ReportModel o1, ReportModel o2) {
                     return o1.getDate().compareTo(o2.getDate());
                 }
             });
         }
-        return data;
+        return dataFn;
     }
 
     @Override

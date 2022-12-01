@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
+import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 
@@ -32,7 +33,7 @@ public class AdminOrdinalNumberController {
     @ApiOperation(value = "API CMS lấy báo cáo khách hàng")
     public ResponseEntity getAllScheduleByStatus(@RequestAttribute(name = Definition.PAYLOAD, required = false) Payload payload,
                                                  @RequestParam("from") String from,
-                                                 @RequestParam("to") String to) {
+                                                 @RequestParam("to") String to) throws ParseException {
         if (payload == null) {
             logger.info("Mã truy cập không hợp lệ");
             throw new AppException(ErrorCode.TOKEN_NOT_FOUND);

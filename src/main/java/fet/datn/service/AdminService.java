@@ -9,7 +9,7 @@ import fet.datn.request.RegisterRequest;
 public interface AdminService {
     TokenEntity login(LoginRequest requestBody);
 
-    EmployeesEntity register(RegisterRequest requestBody);
+    EmployeesEntity register(RegisterRequest requestBody, Payload payload);
 
     EmployeesEntity getProfile(Payload payload);
 }

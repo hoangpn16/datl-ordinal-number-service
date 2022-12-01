@@ -48,12 +48,14 @@ public class AdminServiceImpl implements AdminService {
 
 
     @Override
-    public EmployeesEntity register(RegisterRequest requestBody) {
-        EmployeesEntity em = employeesDao.findOneByUserName(requestBody.getUsername());
-        if (!em.getRole().equals("ADMIN")) {
+    public EmployeesEntity register(RegisterRequest requestBody,Payload payload) {
+        EmployeesEntity admin = employeesDao.findOneByUserId(payload.getUserId());
+        if (!admin.getRole().equals("ADMIN")) {
             logger.error("Dont have permission");
             throw new AppException(ErrorCode.NOT_PERMISSION);
         }
+        EmployeesEntity em = employeesDao.findOneByUserName(requestBody.getUsername());
+
         if (em != null) {
             logger.error("Employee with [{}] username is existed", requestBody.getUsername());
             throw new AppException(ErrorCode.ENTITY_EXISTED);

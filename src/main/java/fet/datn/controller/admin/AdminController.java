@@ -62,7 +62,7 @@ public class AdminController {
             throw new AppException(ErrorCode.TOKEN_NOT_FOUND);
         }
         logger.info("Register request with body [{}]", requestBody.toString());
-        EmployeesEntity data = service.register(requestBody);
+        EmployeesEntity data = service.register(requestBody, payload);
         return ResponseFactory.success(data, EmployeesEntity.class);
     }
 
