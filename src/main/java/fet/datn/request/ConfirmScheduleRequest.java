@@ -5,6 +5,6 @@ import lombok.Data;
 @Data
 public class ConfirmScheduleRequest {
     private String timeSchedule;
-    private String employeeeeNote;
+    private String employeeNote;
     private String location;
 }

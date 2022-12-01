@@ -46,7 +46,8 @@ public enum ErrorCode {
     DONT_HAS_CUSTOMER(HttpStatus.BAD_REQUEST,"FET-625","Không có khách hàng cần xử lí"),
     RANGE_DATE_INVALID(HttpStatus.BAD_REQUEST,"FET-626","Chọn khoảng ngày không quá 10 ngày"),
     PASSAGAIN_INVALID(HttpStatus.BAD_REQUEST,"FET-627","Nhập lại mật khẩu không chính xác"),
-    NOT_PERMISSION(HttpStatus.BAD_REQUEST,"GET-628","Bạn không có quyền thực hiện");
+    NOT_PERMISSION(HttpStatus.BAD_REQUEST,"FET-628","Bạn không có quyền thực hiện"),
+    TIME_SCHEDULE(HttpStatus.BAD_REQUEST,"FET-629","Thiếu thông tin lịch hẹn");
 
 
     private final HttpStatus status;

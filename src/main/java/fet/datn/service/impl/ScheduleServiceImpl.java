@@ -71,6 +71,11 @@ public class ScheduleServiceImpl implements ScheduleService {
             logger.info("UserId có lịch chưa xử lý");
             throw new AppException(ErrorCode.CANT_BOOK_SCHEDULE);
         }
+        List<ScheduleEntity> scheduleCf = scheduleRepository.findAllByCustomerIdAndStatus(payload.getUserId(), Constants.SCHEDULE_STATUS.CONFIRM);
+        if (scheduleCf != null && scheduleCf.size() > 0) {
+            logger.info("UserId có lịch chưa xử lý");
+            throw new AppException(ErrorCode.CANT_BOOK_SCHEDULE);
+        }
 
         ScheduleEntity entity = new ScheduleEntity();
 
@@ -130,12 +135,14 @@ public class ScheduleServiceImpl implements ScheduleService {
         if (entity == null) {
             throw new AppException(ErrorCode.ENTITY_NOT_EXISTS);
         }
-
+        if (Objects.isNull(requestBody.getTimeSchedule())) {
+            throw new AppException(ErrorCode.TIME_SCHEDULE);
+        }
         AppUtils.copyPropertiesIgnoreNull(requestBody, entity);
         entity.setEmployeeConfirmId(payload.getUserId());
         entity.setTimeConfirm(DateTimeUtils.getDateTimeNow());
         entity.setStatus(Constants.SCHEDULE_STATUS.CONFIRM);
-        entity.setEmployeeNote(requestBody.getEmployeeeeNote());
+        entity.setEmployeeNote(requestBody.getEmployeeNote());
 
         String mess = "Lịch hẹn của bạn đã được xác nhận , mời bạn hẹn gặp vào lúc " + requestBody.getTimeSchedule() + " tại " + requestBody.getLocation()
                 + ". Vui lòng xem thông tin chi tiết trên hệ thống.";
