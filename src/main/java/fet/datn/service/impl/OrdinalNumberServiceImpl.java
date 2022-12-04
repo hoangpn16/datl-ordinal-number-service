@@ -134,6 +134,9 @@ public class OrdinalNumberServiceImpl implements OrdinalNumberService {
             throw new AppException(ErrorCode.ENTITY_NOT_EXISTS);
         }
         entity.setStatus(status);
+        if (status.equals(Constants.STATUS.CANCELED)) {
+            smsSenderService.sendMessageViaTele("Số thứ tự của bạn đã bị hủy lúc " + DateTimeUtils.getDateTimeNow() + " do bạn đã không có mặt");
+        }
         return ordinalNumberDao.save(entity);
     }
 
