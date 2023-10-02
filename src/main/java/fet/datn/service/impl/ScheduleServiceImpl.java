@@ -50,7 +50,6 @@ public class ScheduleServiceImpl implements ScheduleService {
         PageResponse pageResponse = PageResponseUtil.buildPageResponse(pageResult);
         return ResponseFactory.success(pageResult.getContent(), pageResponse);
     }
-
     @Override
     public ResponseEntity getReportSchedule(Payload payload, String start, String end, String orderBy, String direction, Integer pageNum, Integer pageSize) {
         DateTimeUtils.validateDateTime(start, end);
